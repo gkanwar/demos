@@ -142,6 +142,13 @@ function renderExercise(moduleId, exerciseId, query) {
     '?seed=' + newSeed(seed);
   retry.textContent = 'Try again';
   retry.hidden = true;
+  const overview = addText(actions, 'button', 'Back to exercises overview',
+    'success-button');
+  overview.type = 'button';
+  overview.hidden = true;
+  overview.addEventListener('click', () => {
+    location.hash = '#/';
+  });
   actions.append(retry);
   form.append(result, actions);
 
@@ -161,26 +168,26 @@ function renderExercise(moduleId, exerciseId, query) {
     });
     result.textContent = 'Score: ' + score.correct + '/' + score.total +
       (saved ? '' : ' · Progress will not be saved.');
+    const complete = score.correct === score.total;
 
     for (const [index, view] of views.entries()) {
       const passed = score.results[index].correct;
       view.fieldset.classList.add(passed ? 'correct' : 'incorrect');
-      view.feedback.textContent = passed ? 'Correct.' :
-        'Incorrect. Correct answer' +
-        (view.question.correctOptionIds.length === 1 ? '' : 's') +
-        ' marked below.';
+      view.feedback.textContent = passed ? 'Correct.' : 'Incorrect. Try again.';
       for (const { option, input, label } of view.options) {
         input.disabled = true;
-        if (view.question.correctOptionIds.includes(option.id)) {
+        if (complete && view.question.correctOptionIds.includes(option.id)) {
           label.classList.add('correct-answer');
         }
       }
-      if (view.question.explanation) {
+      if (complete && view.question.explanation) {
         cleanups.push(renderBlocks(view.question.explanation, view.feedback));
       }
     }
     checkButton.disabled = true;
+    checkButton.hidden = true;
     retry.hidden = false;
+    overview.hidden = !complete;
   });
 
   main.append(form);

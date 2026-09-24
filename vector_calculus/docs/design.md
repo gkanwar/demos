@@ -85,7 +85,7 @@ The content vocabulary is deliberately small:
     { id: String, content: [/* Inline content */] },
   ],
   correctOptionIds: [String],
-  explanation: [/* Block */],        // optional; shown after checking
+  explanation: [/* Block */],        // optional; shown after a full score
 }
 ```
 
@@ -213,9 +213,11 @@ legend, and explicit labels. Score feedback uses an `aria-live` region.
 For each question, grading compares the selected ID set with the correct ID set;
 an exact match earns one mark and any other selection, including no selection,
 earns zero. The result is `m/n`, where `n` is the number of questions in that
-instance. Checking highlights each question's result, shows its correct
-selection and optional explanation, and locks its controls. Each check records
-one attempt. Retrying is the way to answer again after feedback.
+instance. Checking shows each question's result and locks its controls. An
+incomplete attempt does not reveal correct selections or explanations; the
+student can try again with a new seed. A full score reveals explanations and
+shows a green button back to the exercises overview. Each check records one
+attempt.
 
 The only durable student data is one local-storage object under
 `vector-calculus-progress-v1`, keyed by `<moduleId>/<exerciseId>`:
