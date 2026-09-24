@@ -1,0 +1,120 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #1d2935;
+  background: #f7f9fb;
+  line-height: 1.5;
+}
+
+* { box-sizing: border-box; }
+
+body { margin: 0; }
+
+a { color: #165c91; }
+
+.page {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+h1 { margin: 0.5rem 0 1rem; line-height: 1.2; }
+h2 { margin: 2rem 0 0.25rem; }
+
+.module-description, .module-name, .progress-summary {
+  color: #586a79;
+}
+
+.module-name { margin: 1.25rem 0 0; }
+
+.exercise-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.exercise-list li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  border-bottom: 1px solid #dbe3e9;
+  padding: 0.85rem 0;
+}
+
+.statement {
+  margin: 1.5rem 0 2rem;
+}
+
+.equation { overflow-x: auto; }
+
+.widget {
+  margin: 1.5rem 0;
+  border: 1px solid #cad6df;
+  border-radius: 0.5rem;
+  background: white;
+  padding: 1rem;
+}
+
+.widget figcaption { font-weight: 700; }
+.widget p { margin: 0.5rem 0; }
+
+.widget pre {
+  max-height: 18rem;
+  overflow: auto;
+  padding: 0.75rem;
+  background: #eef3f7;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.question {
+  min-width: 0;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid #cad6df;
+  border-radius: 0.5rem;
+  background: white;
+}
+
+.question legend { font-weight: 700; }
+.question-prompt p { margin-top: 0; }
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.55rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.option:hover { background: #f0f5f8; }
+.option input { margin-top: 0.35rem; }
+.correct-answer { background: #e6f4e8; }
+.feedback { margin-top: 0.75rem; }
+.feedback p { margin-bottom: 0; }
+.correct .feedback { color: #226435; }
+.incorrect .feedback { color: #8a3a26; }
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+button {
+  border: 0;
+  border-radius: 0.3rem;
+  padding: 0.7rem 1rem;
+  background: #165c91;
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:disabled { opacity: 0.6; cursor: default; }
+.score { font-weight: 700; }
+
+@media (max-width: 36rem) {
+  .page { padding-top: 1.25rem; }
+}

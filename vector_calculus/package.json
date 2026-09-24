@@ -1,0 +1,17 @@
+{
+  "name": "vector-calculus-exercises",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "katex": "^0.16.0"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0"
+  }
+}

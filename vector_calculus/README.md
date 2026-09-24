@@ -39,3 +39,13 @@ problem statement, including any relevant widgets, and a list of multiple choice
 questions to answer in reference to the statement. Marks should be binary for
 each multiple-choice question, and the total marks for a given exercise are just
 the number of correct answers `m` out of the number possible `n`.
+
+## Running locally
+
+From this directory, run `npm install` and `npm run dev`, then open the URL
+printed by Vite. Use `npm test` for the exercise logic checks and `npm run build`
+to create a static site in `dist/`.
+
+The first implementation uses debug text summaries in place of vector field
+and cube plots. It is intended for local testing of the exercise flow; see
+[the design document](docs/design.md) for the planned visualization interface.

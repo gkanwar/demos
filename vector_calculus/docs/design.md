@@ -13,9 +13,9 @@ bundles its dependencies into a static site. Use a relative Vite `base: './'` so
 the built site can be hosted under a subdirectory. The project uses ES modules
 and a local `package-lock.json`; Node.js 22.12 or newer is the development
 baseline. `package.json` provides `dev`, `build`, `preview`, and `test` scripts,
-with Vite as a development dependency and `katex` and `plotly.js-dist` as
-runtime dependencies. Runtime exercise content does not require a network
-connection.
+with Vite as a development dependency and `katex` as a runtime dependency.
+Add `plotly.js-dist` when the plot renderers are implemented. Runtime exercise
+content does not require a network connection.
 
 ## Source layout and data flow
 
@@ -159,11 +159,14 @@ const generatedDivergence = {
 
 ## Equations and visualization widgets
 
-Use KaTeX for inline and display equations. Use Plotly.js v4 for the four
-built-in sampled-field widgets below. Exercise modules provide mathematical
+Use KaTeX for inline and display equations. The first code milestone renders
+widget captions, descriptions, and a debug summary of their data for local
+testing. The initial exercises use `vector3d` and `cube-faces` placeholders.
+The later plotting milestone will use Plotly.js v4 for the four built-in
+sampled-field widgets below. Exercise modules provide mathematical
 samples, not Plotly traces, so the authoring contract stays independent of the
-plotting library. `src/widgets.js` converts the samples to Plotly traces and
-loads Plotly only when a plot is present.
+plotting library. In that later milestone, `src/widgets.js` will convert the
+samples to Plotly traces and load Plotly only when a plot is present.
 
 | `widget` | `data` fields | Plotly view |
 | --- | --- | --- |
@@ -179,11 +182,11 @@ responsive plot container, enables ordinary pan/zoom or 3D rotation, and calls
 caption and a text description conveying the information needed to answer its
 questions. If a 3D plot cannot load, keep that description visible.
 
-The widget registry maps a `widget` name to an async renderer of the form
-`render(element, data) -> Promise<cleanup>`. The renderer owns its DOM inside
-`element` and returns a cleanup function for navigation away from the
-exercise. A render that finishes after navigation must be cleaned up rather
-than attached to the next view. New interactive widgets register another
+The widget registry maps a `widget` name to a renderer that owns its DOM inside
+the supplied element and returns a cleanup function. The first code milestone
+uses synchronous debug renderers. A later asynchronous renderer may return
+`Promise<cleanup>`; a render that finishes after navigation must be cleaned up
+rather than attached to the next view. New interactive widgets register another
 renderer without changing exercise or question shapes.
 
 ## Navigation, checking, and progress
@@ -253,8 +256,10 @@ runner. Verify these behaviors before adding more curated content:
   not prevent answering.
 - Hash links open the intended variant, browser back/forward works, and retry
   changes the seed.
-- Equations and all four widget types render on desktop and narrow screens;
-  keyboard controls, descriptions, and plot cleanup work when navigating.
+- In the first milestone, equations and debug widget summaries render on
+  desktop and narrow screens, and keyboard answer controls work.
+- In the plotting milestone, all four field widget types render, descriptions
+  remain available, and plots clean up when navigating.
 
 Reference documentation: [Vite static deployment](https://vite.dev/guide/static-deploy),
 [KaTeX API](https://katex.org/docs/api), and Plotly's
