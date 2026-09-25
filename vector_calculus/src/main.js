@@ -1,6 +1,6 @@
 import './style.css';
 import modules from './exercises/index.js';
-import { createRandom, grade, newSeed } from './exercise.js';
+import { createExercise, grade, newSeed } from './exercise.js';
 import { getProgress, recordAttempt } from './progress.js';
 import { renderBlocks, renderInline } from './render.js';
 import { renderWidget } from './widgets.js';
@@ -132,7 +132,7 @@ function renderExercise(moduleId, exerciseId, query) {
     return;
   }
 
-  const instance = exercise.generate({ random: createRandom(seed) });
+  const instance = createExercise(exercise, seed);
   const cleanups = [];
   const main = document.createElement('main');
   main.className = 'page exercise';

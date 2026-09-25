@@ -90,8 +90,9 @@ The content vocabulary is deliberately small:
 ```
 
 Option IDs are unique within a question and remain attached to their meanings
-if an author shuffles the options. `correctOptionIds` has exactly one ID for a
-single-selection question and one or more for a checkbox question. The renderer
+when the app shuffles options using the exercise seed. `correctOptionIds` has
+exactly one ID for a single-selection question and one or more for a checkbox
+question. The renderer
 uses DOM text nodes for text and KaTeX for math; content does not contain raw
 HTML. Authors can place blocks in statements and prompts, while options use
 inline content only.
@@ -229,12 +230,14 @@ seed is replaced with a newly generated 32-bit unsigned integer from
 `crypto.getRandomValues`; an unknown exercise shows a short not-found message
 and menu link.
 
-`src/exercise.js` uses Mulberry32 to derive `random()` from the seed. Reloading
-or sharing the URL reproduces the same variant for a given version of the
+`src/exercise.js` uses Mulberry32 to derive `random()` from the seed. A separate
+seeded stream shuffles each question's options, including checkbox questions,
+without changing their IDs or correct answers. Reloading or sharing the URL
+reproduces the same variant for a given version of the
 exercise module. Opening an exercise from the menu starts a new variant. The
 **Try again** button also generates a new seed and route. A static exercise
-simply returns the same content for each seed. Unsubmitted selections are not
-saved.
+keeps the same prompt and answers while their displayed order can vary by seed.
+Unsubmitted selections are not saved.
 
 Each question renders native radio buttons or checkboxes with a fieldset,
 legend, and explicit labels. Score feedback uses an `aria-live` region.

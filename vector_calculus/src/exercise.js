@@ -9,6 +9,22 @@ export function createRandom(seed) {
   };
 }
 
+export function createExercise(definition, seed) {
+  const instance = definition.generate({ random: createRandom(seed) });
+  const random = createRandom(seed ^ 0x9e3779b9);
+  return {
+    ...instance,
+    questions: instance.questions.map((question) => {
+      const options = [...question.options];
+      for (let index = options.length - 1; index > 0; index--) {
+        const other = Math.floor(random() * (index + 1));
+        [options[index], options[other]] = [options[other], options[index]];
+      }
+      return { ...question, options };
+    }),
+  };
+}
+
 export function newSeed(previous) {
   const value = new Uint32Array(1);
   do {

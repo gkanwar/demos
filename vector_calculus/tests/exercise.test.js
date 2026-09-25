@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import katex from 'katex';
 import modules from '../src/exercises/index.js';
-import { createRandom, grade } from '../src/exercise.js';
+import { createExercise, createRandom, grade } from '../src/exercise.js';
 import { plotFigure } from '../src/plot-data.js';
 import { getProgress, updateProgress } from '../src/progress.js';
 
@@ -21,6 +21,44 @@ test('generated exercises repeat for the same seed and vary across seeds', () =>
   const first = exercise(differential, 'linear-divergence', 1);
   assert.deepEqual(first, exercise(differential, 'linear-divergence', 1));
   assert.notDeepEqual(first, exercise(differential, 'linear-divergence', 2));
+});
+
+test('seeded answer order varies without changing answers or source definitions', () => {
+  const definition = modules.find((module) => module.id === 'coordinates')
+    .exercises[0];
+  const source = definition.generate({ random: createRandom(17) });
+  const instance = createExercise(definition, 17);
+  assert.deepEqual(instance, createExercise(definition, 17));
+  assert.deepEqual(instance.statement, source.statement);
+  assert.deepEqual(instance.questions[0].correctOptionIds,
+    source.questions[0].correctOptionIds);
+  assert.deepEqual(instance.questions[0].options.map((option) => option.id).sort(),
+    source.questions[0].options.map((option) => option.id).sort());
+  assert.deepEqual(definition.generate({ random: createRandom(17) }), source);
+
+  const correctPositions = new Set(Array.from({ length: 32 }, (_, seed) => {
+    const question = createExercise(definition, seed).questions[0];
+    return question.options.findIndex((option) =>
+      question.correctOptionIds.includes(option.id));
+  }));
+  assert.deepEqual([...correctPositions].sort(), [0, 1, 2, 3]);
+});
+
+test('shuffled radio and checkbox options still grade by ID', () => {
+  for (const definition of [
+    differential.exercises.find((entry) => entry.id === 'gradient-squared-norm'),
+    flux.exercises.find((entry) => entry.id === 'constant-field-cube'),
+  ]) {
+    for (const seed of [0, 1, 42]) {
+      const instance = createExercise(definition, seed);
+      for (const question of instance.questions) {
+        assert.equal(grade([question], {
+          [question.id]: [...question.correctOptionIds].reverse(),
+        }).correct, 1);
+        assert.equal(grade([question], { [question.id]: [] }).correct, 0);
+      }
+    }
+  }
 });
 
 test('example exercises have valid, distinct answer choices', () => {
