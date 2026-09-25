@@ -8,6 +8,7 @@ import plotPreviews from './plot-preview.js';
 
 const app = document.getElementById('app');
 let dispose = () => {};
+let menuScrollY = null;
 
 function addText(parent, tag, content, className) {
   const element = document.createElement(tag);
@@ -49,6 +50,9 @@ function renderMenu() {
       link.href = '#/exercise/' + module.id + '/' + exercise.id +
         '?seed=' + newSeed();
       link.textContent = exercise.title;
+      link.addEventListener('click', () => {
+        menuScrollY = window.scrollY;
+      });
       item.append(link);
 
       const summary = progress[module.id + '/' + exercise.id];
@@ -67,6 +71,8 @@ function renderMenu() {
     main.append(section);
   }
   app.append(main);
+  window.scrollTo(0, menuScrollY ?? 0);
+  menuScrollY = null;
 }
 
 function renderNotFound() {
