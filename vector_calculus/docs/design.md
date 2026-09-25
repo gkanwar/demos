@@ -221,8 +221,8 @@ or question shapes. The unlisted `#/plots` route previews each widget type.
 
 ## Navigation, checking, and progress
 
-The menu at `#/` lists exercises grouped by module. Each row shows its title,
-best score, attempt count, and whether it has ever been completed. It has no
+The menu at `#/` lists exercises grouped by module. Each row shows its title
+and either `Completed`, `Best m/n`, or `Not attempted`. It has no
 extra dashboard or account flow. Opening a row navigates to
 `#/exercise/<moduleId>/<exerciseId>?seed=<uint32>`. The browser's hash history
 supports back and forward navigation on a static host. A missing or invalid

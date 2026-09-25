@@ -56,12 +56,11 @@ function renderMenu() {
       item.append(link);
 
       const summary = progress[module.id + '/' + exercise.id];
-      if (summary) {
-        const status = summary.completed ? 'Completed' : 'In progress';
-        addText(item, 'span', status + ' · Best ' +
-          summary.best.correct + '/' + summary.best.total + ' · ' +
-          summary.attempts + ' attempt' +
-          (summary.attempts === 1 ? '' : 's'), 'progress-summary');
+      if (summary?.completed) {
+        addText(item, 'span', 'Completed', 'completion-summary');
+      } else if (summary) {
+        addText(item, 'span', 'Solved ' + summary.best.correct + '/' +
+          summary.best.total, 'progress-summary');
       } else {
         addText(item, 'span', 'Not attempted', 'progress-summary');
       }
