@@ -38,25 +38,24 @@ direction, or coordinate errors.
 
 ## Group map and implementation order
 
-| Group | Module ID | Entries | Implementation note |
-| --- | --- | ---: | --- |
-| Visualizing fields | `visualization` | 12 | Move the existing `identify-radial-field` here when coding this group. |
-| Fields and derivatives | `differential` | 15 | Expand the existing module. |
-| Coordinate systems | `coordinates` | 12 | Use equations and simple geometry/field plots. |
-| Units | `units` | 8 | Use symbolic length powers. |
-| Line integrals | `line-integrals` | 10 | Start with segments and rectangles. |
-| Surface integrals | `flux` | 12 | Expand the existing cube and sphere module. |
-| Volume integrals | `volume-integrals` | 10 | Prefer elementary bounds and symmetry. |
-| Delta functions | `delta-functions` | 12 | Test sifting, scaling, and region support. |
-| Piecewise functions | `piecewise` | 9 | Build cumulative integrals with piecewise answers. |
-| **Total** | | **100** | |
+| Group | Module ID | Implementation note |
+| --- | ---: | --- |
+| Visualizing fields | `visualization` | Move the existing `identify-radial-field` here when coding this group. |
+| Fields and derivatives | `differential` | Expand the existing module. |
+| Coordinate systems | `coordinates` | Use equations and simple geometry/field plots. |
+| Units | `units` | Use symbolic length powers. |
+| Line integrals | `line-integrals` | Start with segments and rectangles. |
+| Surface integrals | `flux` | Expand the existing cube and sphere module. |
+| Volume integrals | `volume-integrals` | Prefer elementary bounds and symmetry. |
+| Delta functions | `delta-functions` | Test sifting, scaling, and region support. |
+| Piecewise functions | `piecewise` | Build cumulative integrals with piecewise answers. |
 
 The module IDs above are future code organization, not a request to rename
 current modules now. The site has no live progress data to migrate. Six rows
 below correspond to exercises already implemented; retain their exercise IDs
 and behavior when extending or reorganizing the modules.
 
-## Visualizing fields (12)
+## Visualizing fields
 
 Use consistent arrows or contours across the labeled plot choices. Distractor
 answers should differ in direction, dependence on position, or symmetry. Plot samples
@@ -77,7 +76,7 @@ should avoid a singularity when one is present.
 | `shear-equation-to-plot` | Given $\vec F=(y,0)$, choose the plot with horizontal arrows reversing across $y=0$. | Equation → four labeled 2D vector plots in statement. |
 | `gaussian-equation-to-plot` | Given $f=e^{-(x^2+y^2)}$, choose the centered peak with decreasing circular contours. | Equation → four labeled scalar plots in statement. |
 
-## Fields and derivatives (15)
+## Fields and derivatives
 
 Give Cartesian fields and ask for a formula or a plot-level interpretation.
 For plot questions, mark the point or region being judged. Seeded coefficients
@@ -101,7 +100,7 @@ should be small integers, including signs where useful.
 | `curl-mixed-linear` | For $\vec F=(ay,bz,cx)$, choose $\nabla\times\vec F=(-b,-c,-a)$. | Equation → vector expression; vary coefficients. |
 | `curl-direction-from-plot` | A planar rotation plot; identify curl along $+\hat e_3$ or $-\hat e_3$. | 2D vector plot → direction choice; vary rotation sense. |
 
-## Coordinate systems (12)
+## Coordinate systems
 
 Supply the coordinate convention above in each relevant statement. Use simple
 points and angles so choices can be exact. For vector questions, state both
@@ -122,7 +121,7 @@ the point and the vector; components depend on position.
 | `sphere-area-element` | On $r=R$, identify outward $d\vec A=\hat e_r R^2\sin\theta\,d\theta\,d\phi$. | Sphere geometry widget; test $\sin\theta$ factor. |
 | `coordinate-volume-elements` | Match $dV=\rho\,d\rho\,d\phi\,dz$ and $dV=r^2\sin\theta\,dr\,d\theta\,d\phi$ to cylindrical/spherical coordinates. | Two questions or multiple selection; exact equation choices. |
 
-## Units (8)
+## Units
 
 Every statement declares $[f]=L^p$ or $[\vec F]=L^p$, with $p$ an
 integer; only powers of length matter. Ask for the resulting power of $L$,
@@ -139,7 +138,7 @@ not a named physical unit.
 | `delta-units-by-dimension` | Find the length powers of $\delta(x)$, $\delta^{(2)}(\vec x)$, and $\delta^{(3)}(\vec x)$: $L^{-1},L^{-2},L^{-3}$. | Three linked questions or one matching choice. |
 | `delta-weighted-integral-units` | Given $[f]=L^p$, find $[\int f(\vec x)\delta^{(3)}(\vec x-\vec a)\,dV]=L^p$. | Equation choices; show cancellation of measure and delta powers in explanation. |
 
-## Line integrals (10)
+## Line integrals
 
 Give a parametrization or simple endpoints whenever it removes ambiguity.
 Orient every closed curve explicitly. A plot of a path or field can accompany
@@ -158,7 +157,7 @@ the equations, but the calculation must remain solvable from the statement.
 | `gradient-field-endpoints` | Given $f=x^2+y^2$ and $\vec F=\nabla f$, use endpoints $P,Q$ to choose $\int_P^Q\vec F\cdot d\vec\ell=f(Q)-f(P)$. | Path plot with endpoints; vary simple coordinates and path shape. |
 | `stokes-simple-check` | For $\vec F=(-y/2,x/2,0)$, compare counterclockwise circulation around the unit square with $\int_S(\nabla\times\vec F)\cdot\hat e_3\,dA$; both equal $1$. | Planar square with oriented boundary; ask for curl and equal integral values. |
 
-## Surface integrals (12)
+## Surface integrals
 
 Use labeled faces for selection questions and state each orientation. A disk
 or rectangle is a planar patch even though its boundary is a closed curve.
@@ -180,7 +179,7 @@ face labels $A,\ldots,F$.
 | `tilted-rectangle-flux` | For $\vec r(u,v)=(u,v,u)$, $0\le u,v\le1$, oriented by $\partial_u\vec r\times\partial_v\vec r=(-1,0,1)$, flux of $\hat e_3$ is $1$. | Geometry plot; give parametrization and orientation; ask normal then flux. |
 | `divergence-theorem-check` | For $\vec F=\vec x$ on the unit cube, compare total outward flux $3$ with $\int_V\nabla\cdot\vec F\,dV=3$. | Cube and field plot; ask divergence and equal values. |
 
-## Volume integrals (10)
+## Volume integrals
 
 Use exact choices. In radial examples, provide the suitable volume element
 and simple radial bounds. The all-space Gaussian entry supplies its one-dimensional
@@ -199,7 +198,7 @@ integral identity, so no special-function knowledge is required.
 | `separable-all-space-integral` | Integrate $e^{-\lvert x\rvert-\lvert y\rvert-\lvert z\rvert}$ over $\mathbb R^3$: $8$, using three one-dimensional factors. | Equation choices; give $\int_{-\infty}^{\infty}e^{-\lvert t\rvert}dt=2$ if needed. |
 | `gaussian-all-space-integral` | Integrate $e^{-(x^2+y^2+z^2)}$ over $\mathbb R^3$: $\pi^{3/2}$. | Equation choices; supply $\int_{-\infty}^{\infty}e^{-t^2}dt=\sqrt\pi$. |
 
-## Delta functions (12)
+## Delta functions
 
 Use $\delta^{(2)}(\vec x-\vec a)=\delta(x-a_x)\delta(y-a_y)$ and its
 three-dimensional counterpart. State this product convention in multi-dimensional
@@ -221,7 +220,7 @@ boundaries. Region widgets mark both the domain and support point.
 | `delta-3d-ellipsoid-support` | Test $a_x^2/A^2+a_y^2/B^2+a_z^2/C^2<1$ for an ellipsoid, then choose the delta integral. | Ellipsoid equation and marked support point; small exact parameters. |
 | `delta-3d-cylinder-support` | Test $a_x^2+a_y^2<R^2$ and $0<a_z<h$ for a finite cylinder, then choose the delta integral. | Cylinder and marked support point; include outside-side and outside-cap cases. |
 
-## Piecewise functions (9)
+## Piecewise functions
 
 Every entry asks for the *whole function* of a moving upper bound or radius,
 with multiple-choice answers written as piecewise equations. Use two or three
