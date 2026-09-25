@@ -49,3 +49,4 @@ to create a static site in `dist/`.
 Plots support rotation or pan, zoom, hover, and reset controls. Open
 `#/plots` after the local URL for a developer preview of all widget types.
 See [the design document](docs/design.md) for the authoring interface.
+See [the exercise catalog](docs/exercise-catalog.md) for the planned exercise groups and entries.
