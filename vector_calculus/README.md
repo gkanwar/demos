@@ -46,6 +46,6 @@ From this directory, run `npm install` and `npm run dev`, then open the URL
 printed by Vite. Use `npm test` for the exercise logic checks and `npm run build`
 to create a static site in `dist/`.
 
-The first implementation uses debug text summaries in place of vector field
-and cube plots. It is intended for local testing of the exercise flow; see
-[the design document](docs/design.md) for the planned visualization interface.
+Plots support rotation or pan, zoom, hover, and reset controls. Open
+`#/plots` after the local URL for a developer preview of all widget types.
+See [the design document](docs/design.md) for the authoring interface.

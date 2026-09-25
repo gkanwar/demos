@@ -58,6 +58,11 @@ h2 { margin: 2rem 0 0.25rem; }
 .widget figcaption { font-weight: 700; }
 .widget p { margin: 0.5rem 0; }
 
+.widget-plot {
+  width: 100%;
+  height: clamp(18rem, 60vw, 30rem);
+}
+
 .widget pre {
   max-height: 18rem;
   overflow: auto;

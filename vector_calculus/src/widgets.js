@@ -1,4 +1,7 @@
+import { plotFigure } from './plot-data.js';
+
 const renderers = new Map();
+let plotlyPromise;
 
 export function registerWidget(name, renderer) {
   renderers.set(name, renderer);
@@ -11,8 +14,61 @@ function renderDebug(element, data, widget) {
   return () => {};
 }
 
-registerWidget('vector3d', renderDebug);
-registerWidget('cube-faces', renderDebug);
+function loadPlotly() {
+  if (!plotlyPromise) {
+    plotlyPromise = import('plotly.js-dist')
+      .then((module) => module.default || module)
+      .catch((error) => {
+        plotlyPromise = undefined;
+        throw error;
+      });
+  }
+  return plotlyPromise;
+}
+
+function renderPlot(element, data, widget) {
+  const plot = document.createElement('div');
+  plot.className = 'widget-plot';
+  plot.textContent = 'Loading plot…';
+  element.append(plot);
+
+  let disposed = false;
+  let library;
+  let plotted = false;
+  loadPlotly().then(async (plotly) => {
+    if (disposed) return;
+    library = plotly;
+    const figure = plotFigure(widget, data);
+    plot.replaceChildren();
+    await plotly.newPlot(plot, figure.traces, figure.layout, {
+      displayModeBar: true,
+      displaylogo: false,
+      responsive: true,
+      scrollZoom: false,
+    });
+    plotted = true;
+    if (disposed) plotly.purge(plot);
+  }).catch(() => {
+    if (library) library.purge(plot);
+    if (disposed) return;
+    plot.replaceChildren();
+    const notice = document.createElement('p');
+    notice.textContent = 'Interactive plot unavailable; showing its data.';
+    plot.append(notice);
+    renderDebug(plot, data, widget);
+  });
+
+  return () => {
+    disposed = true;
+    if (plotted) library.purge(plot);
+  };
+}
+
+for (const name of [
+  'vector2d', 'scalar2d', 'vector3d', 'scalar3d', 'geometry3d',
+]) {
+  registerWidget(name, renderPlot);
+}
 
 export function renderWidget(block, host) {
   const figure = document.createElement('figure');

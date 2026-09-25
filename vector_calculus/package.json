@@ -9,7 +9,8 @@
     "test": "node --test"
   },
   "dependencies": {
-    "katex": "^0.16.0"
+    "katex": "^0.16.0",
+    "plotly.js-dist": "^4.1.1"
   },
   "devDependencies": {
     "vite": "^7.0.0"

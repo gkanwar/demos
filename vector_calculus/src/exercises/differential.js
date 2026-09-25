@@ -1,19 +1,13 @@
+import { sampleVectorField } from '../geometry.js';
+
 const text = (value) => ({ type: 'text', value });
 const math = (tex) => ({ type: 'math', tex });
 const paragraph = (...content) => ({ type: 'paragraph', content });
 const choice = (id, tex) => ({ id, content: [math(tex)] });
 
-const points = [];
-for (const x of [-1, 0, 1]) {
-  for (const y of [-1, 0, 1]) {
-    for (const z of [-1, 0, 1]) {
-      if (x || y || z) points.push([x, y, z]);
-    }
-  }
-}
-const x = points.map((point) => point[0]);
-const y = points.map((point) => point[1]);
-const z = points.map((point) => point[2]);
+const radialField = sampleVectorField(
+  [-1, -0.5, 0, 0.5, 1], (x, y, z) => [x, y, z],
+);
 
 export default {
   id: 'differential',
@@ -29,9 +23,9 @@ export default {
           {
             type: 'widget',
             widget: 'vector3d',
-            data: { x, y, z, u: x, v: y, w: z },
-            caption: 'Sampled vector field in three dimensions',
-            description: 'The intended plot has arrows pointing away from the origin, with length increasing with distance.',
+            data: radialField,
+            caption: '3D vector field',
+            description: 'Vector field pointed away from the origin in all directions.',
           },
         ],
         questions: [{

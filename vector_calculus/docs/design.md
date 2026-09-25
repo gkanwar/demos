@@ -13,9 +13,9 @@ bundles its dependencies into a static site. Use a relative Vite `base: './'` so
 the built site can be hosted under a subdirectory. The project uses ES modules
 and a local `package-lock.json`; Node.js 22.12 or newer is the development
 baseline. `package.json` provides `dev`, `build`, `preview`, and `test` scripts,
-with Vite as a development dependency and `katex` as a runtime dependency.
-Add `plotly.js-dist` when the plot renderers are implemented. Runtime exercise
-content does not require a network connection.
+with Vite as a development dependency and `katex` and `plotly.js-dist` as
+runtime dependencies. Runtime exercise content does not require a network
+connection.
 
 ## Source layout and data flow
 
@@ -159,35 +159,49 @@ const generatedDivergence = {
 
 ## Equations and visualization widgets
 
-Use KaTeX for inline and display equations. The first code milestone renders
-widget captions, descriptions, and a debug summary of their data for local
-testing. The initial exercises use `vector3d` and `cube-faces` placeholders.
-The later plotting milestone will use Plotly.js v4 for the four built-in
-sampled-field widgets below. Exercise modules provide mathematical
-samples, not Plotly traces, so the authoring contract stays independent of the
-plotting library. In that later milestone, `src/widgets.js` will convert the
-samples to Plotly traces and load Plotly only when a plot is present.
+Use KaTeX for inline and display equations and Plotly.js v4 for plotting.
+Exercise modules provide mathematical samples, not Plotly traces, so the
+authoring contract stays independent of the plotting library. Plotly is loaded
+only when a plot is present.
 
 | `widget` | `data` fields | Plotly view |
 | --- | --- | --- |
 | `vector2d` | Equal-length `x`, `y`, `u`, `v` arrays | Quiver arrows |
 | `scalar2d` | `x`, `y` coordinate arrays and `values` matrix (rows follow `y`, columns follow `x`) | Contours |
-| `vector3d` | Equal-length `x`, `y`, `z`, `u`, `v`, `w` arrays | Cones |
-| `scalar3d` | Equal-length flattened `x`, `y`, `z`, `values` arrays, plus `isomin`, `isomax` | Isosurfaces |
+| `vector3d` | Equal-length `x`, `y`, `z`, `u`, `v`, `w` arrays | Small translucent 3D arrows |
+| `scalar3d` | Equal-length flattened `x`, `y`, `z`, `values` arrays, plus `isomin`, `isomax` | Transparent volume shading |
+| `geometry3d` | `mode` (`surface` or `volume`), `surfaces` with sampled `x`, `y`, `z` matrices; optional labels, edges, and vector arrays | Parametric surfaces with overlays |
+
+For `geometry3d`, a volume is depicted by its translucent, closed boundary.
+Authors can use `sampleSurface` with a parametric equation to create a patch;
+`sphereSurface` and `boxBoundary` are ready-made examples. All surface patches
+use the same blue material, with opacity 0.72 for surfaces and 0.28 for volume
+boundaries. This representation supports later regions bounded by several
+equation-defined surfaces without requiring Plotly data in exercise modules.
+
+The `sampleVectorField` helper samples a field on a three-dimensional grid and
+omits zero vectors. All 3D vector fields use the same translucent green arrows:
+a `scatter3d` line from each sample point to a cone head. The largest shaft is
+half a grid step long; shorter vectors retain proportionally shorter arrows.
+The radial exercise and sphere overlay sample five points per axis from -1 to
+1, while the cube samples five points per axis inside its faces. Face labels
+are added after the arrows. The `scalar3d` view uses 15 transparent volume
+layers between `isomin` and `isomax`, with color and opacity varying by value.
+Its preview shows the full sampled range of `x² + y² + z²` and includes a color
+bar.
 
 Widgets default to axis labels `x`, `y`, and `z`; `data.axisLabels` may replace
-them with an object containing the corresponding labels. The renderer uses a
-responsive plot container, enables ordinary pan/zoom or 3D rotation, and calls
-`Plotly.purge` when leaving the exercise. Every widget block has a visible
-caption and a text description conveying the information needed to answer its
-questions. If a 3D plot cannot load, keep that description visible.
+them. The responsive plot exposes Plotly's mode bar for pan, zoom, rotation,
+hover, and reset; page scrolling does not zoom the plot. Every widget keeps its
+visible caption and text description. If rendering fails, its data appears as
+a debug summary.
 
 The widget registry maps a `widget` name to a renderer that owns its DOM inside
-the supplied element and returns a cleanup function. The first code milestone
-uses synchronous debug renderers. A later asynchronous renderer may return
-`Promise<cleanup>`; a render that finishes after navigation must be cleaned up
-rather than attached to the next view. New interactive widgets register another
-renderer without changing exercise or question shapes.
+the supplied element and returns a synchronous cleanup function. Plotly loads
+asynchronously inside that renderer. Navigation before loading finishes skips
+or purges the stale plot; leaving a rendered plot calls `Plotly.purge`.
+New interactive widgets register another renderer without changing exercise
+or question shapes. The unlisted `#/plots` route previews each widget type.
 
 ## Navigation, checking, and progress
 
@@ -258,14 +272,14 @@ runner. Verify these behaviors before adding more curated content:
   not prevent answering.
 - Hash links open the intended variant, browser back/forward works, and retry
   changes the seed.
-- In the first milestone, equations and debug widget summaries render on
-  desktop and narrow screens, and keyboard answer controls work.
-- In the plotting milestone, all four field widget types render, descriptions
-  remain available, and plots clean up when navigating.
+- Equations and all field and geometry widget types render on desktop and
+  narrow screens; descriptions remain available, and plots clean up when
+  navigating.
 
 Reference documentation: [Vite static deployment](https://vite.dev/guide/static-deploy),
 [KaTeX API](https://katex.org/docs/api), and Plotly's
 [quiver](https://plotly.com/javascript/quiver-plots/),
 [contour](https://plotly.com/javascript/contour-plots/),
-[cone](https://plotly.com/javascript/reference/cone/), and
-[isosurface](https://plotly.com/javascript/3d-isosurface-plots/) guides.
+[cone](https://plotly.com/javascript/reference/cone/),
+[3D line](https://plotly.com/javascript/3d-line-plots/), and
+[volume](https://plotly.com/javascript/reference/volume/) guides.

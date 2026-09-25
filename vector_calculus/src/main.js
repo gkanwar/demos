@@ -3,6 +3,8 @@ import modules from './exercises/index.js';
 import { createRandom, grade, newSeed } from './exercise.js';
 import { getProgress, recordAttempt } from './progress.js';
 import { renderBlocks, renderInline } from './render.js';
+import { renderWidget } from './widgets.js';
+import plotPreviews from './plot-preview.js';
 
 const app = document.getElementById('app');
 let dispose = () => {};
@@ -68,6 +70,38 @@ function renderNotFound() {
   addText(main, 'h1', 'Exercise not found');
   menuLink(main);
   app.append(main);
+}
+
+function renderPlotPreview() {
+  const main = document.createElement('main');
+  main.className = 'page';
+  menuLink(main);
+  addText(main, 'h1', 'Plot previews');
+  addText(main, 'p', 'Developer view for checking plot types and controls.');
+
+  const picker = document.createElement('select');
+  picker.setAttribute('aria-label', 'Plot type');
+  plotPreviews.forEach((preview, index) => {
+    const option = document.createElement('option');
+    option.value = String(index);
+    option.textContent = preview.title;
+    picker.append(option);
+  });
+  main.append(picker);
+
+  const stage = document.createElement('div');
+  main.append(stage);
+  app.append(main);
+
+  let stop = () => {};
+  const show = () => {
+    stop();
+    stage.replaceChildren();
+    stop = renderWidget(plotPreviews[Number(picker.value)].block, stage);
+  };
+  picker.addEventListener('change', show);
+  show();
+  dispose = () => stop();
 }
 
 function renderExercise(moduleId, exerciseId, query) {
@@ -208,6 +242,8 @@ function render() {
   const parts = path.split('/').filter(Boolean);
   if (parts.length === 0) {
     renderMenu();
+  } else if (parts[0] === 'plots' && parts.length === 1) {
+    renderPlotPreview();
   } else if (parts[0] === 'exercise' && parts.length === 3) {
     renderExercise(parts[1], parts[2], query);
   } else {
