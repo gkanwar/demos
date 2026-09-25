@@ -1,7 +1,11 @@
-import { ex, m, p, q, scalar2d, stub, vector2d } from './common.js';
+import { ex, m, p, q, scalar2d, vector2d } from './common.js';
 
 const signs = [['positive', '\\text{positive}'], ['negative', '\\text{negative}'],
   ['zero', '0']];
+const markedContour = scalar2d((x, y) => x * x + y * y,
+  'Contours with a marked point', 'The gradient direction is requested at P.');
+markedContour.data.points = [{ x: 1, y: 0, label: 'P' }];
+markedContour.data.showContourLabels = true;
 
 export default [
   ex('gradient-linear-scalar', 'Gradient of a linear scalar field', [
@@ -32,8 +36,7 @@ export default [
   ], 'correct', 'Apply the chain rule to the exponent −|x|².')]),
   ex('gradient-from-contours', 'Gradient direction from contours', [
     p('Contours of a scalar field have increasing values outward. The point P is (1, 0).'),
-    stub('marked-contour', 'f(x,y)=x^2+y^2; mark P=(1,0); label increasing contours',
-      'Contours with a marked point', 'The gradient direction is requested at P.'),
+    markedContour,
   ], [q('direction', 'Which way does the gradient point at P?', [
     ['right', '+\\hat e_1'], ['left', '-\\hat e_1'],
     ['up', '+\\hat e_2'], ['down', '-\\hat e_2'],

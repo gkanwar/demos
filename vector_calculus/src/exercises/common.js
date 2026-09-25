@@ -24,10 +24,8 @@ export const ex = (id, title, statement, questions) => ({
   id, title, generate: () => ({ statement, questions }),
 });
 
-export const stub = (kind, spec, caption, description, labels) => ({
-  type: 'widget', widget: 'diagram-stub',
-  data: { kind, spec, ...(labels ? { labels } : {}) },
-  caption, description,
+export const diagram = (widget, data, caption, description) => ({
+  type: 'widget', widget, data, caption, description,
 });
 
 const vectorAxis = [-2, -1, 0, 1, 2];

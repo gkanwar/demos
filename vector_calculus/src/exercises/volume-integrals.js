@@ -1,5 +1,5 @@
 import { boxBoundary, sphereSurface } from '../geometry.js';
-import { ex, m, p, q, stub } from './common.js';
+import { diagram, ex, m, p, q } from './common.js';
 
 const sphere = { type: 'widget', widget: 'geometry3d',
   data: { mode: 'volume', surfaces: [sphereSurface()] },
@@ -11,6 +11,8 @@ const cube = { type: 'widget', widget: 'geometry3d',
   caption: 'Unit cube', description: 'The integration region is [0,1]³.' };
 const sphericalMeasure = p('Use spherical coordinates with ',
   m('dV=r^2\\sin\\theta\\,dr\\,d\\theta\\,d\\phi'), '.');
+const region = (shapes, caption, description, labels = []) =>
+  diagram('diagram3d', { shapes, labels, hideTicks: true }, caption, description);
 
 export default {
   id: 'volume-integrals',
@@ -19,8 +21,10 @@ export default {
   exercises: [
     ex('constant-box-integral', 'A constant over a box', [
       p('A box has side lengths ', m('a,b,h>0'), '. Integrate the constant ', m('c'), '.'),
-      stub('region-3d', 'rectangular box with side lengths a,b,h',
-        'Rectangular box', 'The box is the integration region.'),
+      region([{ kind: 'box', bounds: { x: [0, 1.2], y: [0, 0.9], z: [0, 1.5] } }],
+        'Rectangular box', 'Schematic box with side lengths a, b, h.',
+        [{ x: 1.3, y: 0, z: 0, label: 'a' },
+          { x: 0, y: 1, z: 0, label: 'b' }, { x: 0, y: 0, z: 1.6, label: 'h' }]),
     ], [q('integral', 'What is ∫V c dV?', [
       ['correct', 'cabh'], ['sum', 'c(a+b+h)'],
       ['half', 'cabh/2'], ['area', 'cab'],
@@ -28,8 +32,8 @@ export default {
     ex('odd-centered-box-integral', 'Odd function over a centered box', [
       p('Integrate ', m('x'), ' over ',
         m('[-a,a]\\times[-b,b]\\times[-h,h]'), ', with positive a, b, h.'),
-      stub('region-3d', 'box [-a,a] x [-b,b] x [-h,h], centered at origin',
-        'Centered box', 'The box is symmetric across x = 0.'),
+      region([{ kind: 'box', bounds: { x: [-1, 1], y: [-0.8, 0.8], z: [-1.2, 1.2] } }],
+        'Centered box', 'Schematic box symmetric about the origin.'),
     ], [q('integral', 'What is the integral?', [
       ['correct', '0'], ['positive', '8a^2bh'],
       ['negative', '-8a^2bh'], ['volume', '8abh'],
@@ -37,8 +41,8 @@ export default {
     ex('linear-positive-box-integral', 'Linear function over a positive box', [
       p('Integrate ', m('x'), ' over ', m('[0,a]\\times[0,b]\\times[0,h]'),
         ', with positive a, b, h.'),
-      stub('region-3d', 'box [0,a] x [0,b] x [0,h]',
-        'Positive-coordinate box', 'The box is the integration region.'),
+      region([{ kind: 'box', bounds: { x: [0, 1.2], y: [0, 0.9], z: [0, 1.5] } }],
+        'Positive-coordinate box', 'Schematic box in the positive coordinate octant.'),
     ], [q('integral', 'What is the integral?', [
       ['correct', 'a^2bh/2'], ['missing-half', 'a^2bh'],
       ['wrong-axis', 'ab^2h/2'], ['volume', 'abh'],
@@ -65,8 +69,9 @@ export default {
     ex('constant-shell-integral', 'A constant over a spherical shell', [
       p('Integrate ', m('c'), ' over the shell ', m('a<r<b'), ', with ', m('0<a<b'), '.'),
       sphericalMeasure,
-      stub('region-3d', 'spherical shell a<r<b centered at origin',
-        'Spherical shell', 'The region lies between two concentric spheres.'),
+      region([{ kind: 'shell', inner: 0.55, outer: 1.2 }],
+        'Spherical shell', 'Schematic region between concentric spheres.',
+        [{ x: 0.55, y: 0, z: 0, label: 'a' }, { x: 1.2, y: 0, z: 0, label: 'b' }]),
     ], [q('integral', 'What is the integral?', [
       ['correct', '4\\pi c(b^3-a^3)/3'],
       ['sum', '4\\pi c(b^3+a^3)/3'],
@@ -77,8 +82,8 @@ export default {
       p('Integrate ', m('c'), ' over ', m('0\\le\\rho\\le R'), ', ',
         m('0\\le z\\le h'), ', with full azimuth and ', m('R,h>0'),
         '. Use ', m('dV=\\rho\\,d\\rho\\,d\\phi\\,dz'), '.'),
-      stub('region-3d', 'cylinder 0<=rho<=R, 0<=z<=h, full azimuth',
-        'Solid cylinder', 'The cylinder is the integration region.'),
+      region([{ kind: 'cylinder', radius: 1, zRange: [0, 1.5] }],
+        'Solid cylinder', 'Schematic radius R and height h.'),
     ], [q('integral', 'What is the integral?', [
       ['correct', 'c\\pi R^2h'], ['missing-half', '2\\pi cR^2h'],
       ['side', '2\\pi cRh'], ['sphere', '4\\pi cR^3/3'],

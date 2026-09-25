@@ -171,6 +171,9 @@ only when a plot is present.
 | `vector3d` | Equal-length `x`, `y`, `z`, `u`, `v`, `w` arrays | Small translucent 3D arrows |
 | `scalar3d` | Equal-length flattened `x`, `y`, `z`, `values` arrays, plus `isomin`, `isomax` | Transparent volume shading |
 | `geometry3d` | `mode` (`surface` or `volume`), `surfaces` with sampled `x`, `y`, `z` matrices; optional labels, edges, and vector arrays | Parametric surfaces with overlays |
+| `diagram1d` | `kind: 'support'` with an optional interval and support points, or `kind: 'profile'` with line segments and a moving bound | Number lines and piecewise profiles |
+| `diagram2d` | Optional disk/rectangle shapes, points, labels, directed path, sampled field, and moving disk bound | Plane regions and oriented paths |
+| `diagram3d` | Optional box/sphere/shell/cylinder/disk/patch/ellipsoid shapes, points, labels, local arrows, sampled field, and moving sphere bound | Space regions, surfaces, and bases |
 
 For `geometry3d`, a volume is depicted by its translucent, closed boundary.
 Authors can use `sampleSurface` with a parametric equation to create a patch;
@@ -189,6 +192,18 @@ are added after the arrows. The `scalar3d` view uses 15 transparent volume
 layers between `isomin` and `isomax`, with color and opacity varying by value.
 Its preview shows the full sampled range of `x² + y² + z²` and includes a color
 bar.
+
+The diagram widgets use the same Plotly surface and arrow styles as the field
+widgets. Scene data remains geometry-oriented: exercise modules specify shapes,
+support coordinates, paths, and optional bound controls rather than Plotly
+traces. `diagramFigure` in `src/diagram-data.js` translates those descriptions
+to figures. Symbolic dimensions are drawn schematically with hidden numeric
+ticks; numerical delta support diagrams use exact stated dimensions and
+coordinates. Directed paths have orange orientation arrows. Piecewise exercises
+give all nine moving bounds a range slider; orange outlines mark the bound and
+green shading shows its overlap with the source region. The slider changes only
+the illustration, not the question or answer. The preview route includes
+examples of every diagram family and the moving bounds.
 
 Widgets default to axis labels `x`, `y`, and `z`; `data.axisLabels` may replace
 them. The responsive plot exposes Plotly's mode bar for pan, zoom, rotation,

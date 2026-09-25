@@ -1,5 +1,9 @@
 import visualization from './exercises/visualization.js';
 import flux from './exercises/flux.js';
+import coordinates from './exercises/coordinates.js';
+import delta from './exercises/delta-functions.js';
+import line from './exercises/line-integrals.js';
+import piecewise from './exercises/piecewise.js';
 import { sphereSurface } from './geometry.js';
 
 const vectorAxis = [-2, -1, 0, 1, 2];
@@ -12,6 +16,8 @@ const volumePoints = volumeAxis.flatMap((x) =>
 const radialField = visualization.exercises.find((entry) =>
   entry.id === 'identify-radial-field').generate().statement[1];
 const cube = flux.exercises[0].generate().statement[1];
+const example = (module, id) => module.exercises.find((entry) =>
+  entry.id === id).generate().statement.find((block) => block.type === 'widget');
 
 export default [
   {
@@ -84,4 +90,20 @@ export default [
     },
   },
   { title: 'Labeled cube with field', block: cube },
+  { title: 'Delta supports on a number line',
+    block: example(delta, 'delta-1d-inside-interval') },
+  { title: 'Piecewise profile with a moving bound',
+    block: example(piecewise, 'nested-slab-layers') },
+  { title: 'Directed path',
+    block: example(line, 'rectangular-path-contributing-legs') },
+  { title: 'Disk and support point',
+    block: example(delta, 'delta-2d-disk-support') },
+  { title: 'Growing disk',
+    block: example(piecewise, 'uniform-disk-cumulative') },
+  { title: 'Cylinder and support points',
+    block: example(delta, 'delta-3d-cylinder-support') },
+  { title: 'Local basis vectors',
+    block: example(coordinates, 'spherical-basis-directions') },
+  { title: 'Growing ball and shell',
+    block: example(piecewise, 'hollow-shell-cumulative') },
 ];

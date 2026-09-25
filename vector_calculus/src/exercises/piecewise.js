@@ -1,8 +1,18 @@
-import { ex, m, p, q, stub } from './common.js';
+import { diagram, ex, m, p, q } from './common.js';
 
 const cases = (...rows) => '\\begin{cases}' + rows.join('\\\\') + '\\end{cases}';
-const range = (spec, caption) => stub('number-line', spec, caption,
-  'The source function and the moving integration limit are shown schematically.');
+const profile = (segments, control, caption, xRange, yRange, labels = []) =>
+  diagram('diagram1d', { kind: 'profile', segments, control, xRange, yRange,
+    labels, axisLabels: { x: 'position', y: 'f' }, hideTicks: true },
+  caption, 'Schematic source profile; drag the orange integration bound.');
+const ball = (kind, control, caption, description) =>
+  diagram('diagram3d', { shapes: [{ kind, radius: 1, inner: 0.5, outer: 1.1 }],
+    control, ranges: { x: [-1.9, 1.9], y: [-1.9, 1.9], z: [-1.9, 1.9] },
+    labels: kind === 'shell'
+      ? [{ x: 0.5, y: 0, z: 0, label: 'a' },
+        { x: 1.1, y: 0, z: 0, label: 'b' }]
+      : [{ x: 1, y: 0, z: 0, label: 'R' }],
+    hideTicks: true }, caption, description);
 
 export default {
   id: 'piecewise',
@@ -12,7 +22,11 @@ export default {
     ex('one-sided-top-hat-cumulative', 'Cumulative integral of a top hat', [
       p('Let ', m('f(t)=1'), ' for ', m('0<t<a'), ', and zero elsewhere, with ',
         m('a>0'), '. For ', m('x\\ge0'), ', define ', m('G(x)=\\int_0^x f(t)\\,dt'), '.'),
-      range('f(t)=1 for 0<t<a, 0 elsewhere; moving upper bound x>=0', 'Top-hat function'),
+      profile([{ x0: 0, x1: 1, y0: 1, y1: 1 },
+        { x0: 1, x1: 1.7, y0: 0, y1: 0 }],
+      { kind: 'upper', symbol: 'x', min: 0, max: 1.7, step: 0.05,
+        initial: 0.65, thresholds: [{ value: 1, label: 'a' }] },
+      'Top-hat function', [0, 1.8], [-0.15, 1.3], [{ x: 1, y: 1.15, label: 'a' }]),
     ], [q('function', 'Which expression gives G(x) for all x ≥ 0?', [
       ['correct', cases('x & 0\\le x\\le a', 'a & x>a')],
       ['unbounded', cases('x & 0\\le x\\le a', 'x & x>a')],
@@ -21,7 +35,13 @@ export default {
     ex('symmetric-slab-cumulative', 'Cumulative integral of a symmetric slab', [
       p('Let ', m('f(z)=c'), ' for ', m('|z|<a'), ', and zero elsewhere, with ',
         m('c,a>0'), '. For ', m('s\\ge0'), ', define ', m('G(s)=\\int_{-s}^{s}f(z)\\,dz'), '.'),
-      range('f(z)=c for |z|<a, 0 elsewhere; bounds [-s,s]', 'Symmetric slab profile'),
+      profile([{ x0: -1.7, x1: -1, y0: 0, y1: 0 },
+        { x0: -1, x1: 1, y0: 1, y1: 1 },
+        { x0: 1, x1: 1.7, y0: 0, y1: 0 }],
+      { kind: 'symmetric', symbol: 's', min: 0, max: 1.7, step: 0.05,
+        initial: 0.65, thresholds: [{ value: -1 }, { value: 1 }] },
+      'Symmetric slab profile', [-1.8, 1.8], [-0.15, 1.3],
+      [{ x: -1, y: 1.15, label: '−a' }, { x: 1, y: 1.15, label: 'a' }]),
     ], [q('function', 'Which expression gives G(s) for all s ≥ 0?', [
       ['correct', cases('2cs & 0\\le s\\le a', '2ca & s>a')],
       ['half', cases('cs & 0\\le s\\le a', 'ca & s>a')],
@@ -30,7 +50,11 @@ export default {
     ex('weighted-slab-cumulative', 'Cumulative integral of a weighted slab', [
       p('Let ', m('f(z)=z'), ' for ', m('0<z<a'), ', and zero elsewhere, with ',
         m('a>0'), '. For ', m('s\\ge0'), ', define ', m('G(s)=\\int_0^s f(z)\\,dz'), '.'),
-      range('f(z)=z for 0<z<a, 0 elsewhere; moving upper bound s', 'Weighted slab profile'),
+      profile([{ x0: 0, x1: 1, y0: 0, y1: 1 },
+        { x0: 1, x1: 1.7, y0: 0, y1: 0 }],
+      { kind: 'upper', symbol: 's', min: 0, max: 1.7, step: 0.05,
+        initial: 0.65, thresholds: [{ value: 1 }] },
+      'Weighted slab profile', [0, 1.8], [-0.15, 1.3], [{ x: 1, y: 1.15, label: 'a' }]),
     ], [q('function', 'Which expression gives G(s) for all s ≥ 0?', [
       ['correct', cases('s^2/2 & 0\\le s\\le a', 'a^2/2 & s>a')],
       ['linear', cases('s & 0\\le s\\le a', 'a & s>a')],
@@ -41,8 +65,15 @@ export default {
         ' for ', m('a<|z|<b'), ', and zero elsewhere, with ',
         m('0<a<b'), ' and ', m('c_1,c_2>0'), '. Define ',
         m('G(s)=\\int_{-s}^{s}f(z)\\,dz'), ' for ', m('s\\ge0'), '.'),
-      range('symmetric layers: c1 for |z|<a, c2 for a<|z|<b, 0 outside',
-        'Two-layer slab profile'),
+      profile([{ x0: -1.8, x1: -1.2, y0: 0, y1: 0 },
+        { x0: -1.2, x1: -0.6, y0: 0.55, y1: 0.55 },
+        { x0: -0.6, x1: 0.6, y0: 1, y1: 1 },
+        { x0: 0.6, x1: 1.2, y0: 0.55, y1: 0.55 },
+        { x0: 1.2, x1: 1.8, y0: 0, y1: 0 }],
+      { kind: 'symmetric', symbol: 's', min: 0, max: 1.8, step: 0.05,
+        initial: 0.4, thresholds: [-1.2, -0.6, 0.6, 1.2].map((value) => ({ value })) },
+      'Two-layer slab profile', [-1.9, 1.9], [-0.15, 1.3],
+      [{ x: 0.6, y: 1.15, label: 'a' }, { x: 1.2, y: 0.8, label: 'b' }]),
     ], [q('function', 'Which expression gives G(s) for all s ≥ 0?', [
       ['correct', cases('2c_1s & 0\\le s\\le a',
         '2c_1a+2c_2(s-a) & a<s\\le b', '2c_1a+2c_2(b-a) & s>b')],
@@ -55,7 +86,11 @@ export default {
       p('Let ', m('f(t)=0'), ' for ', m('t<a'), ', and ', m('f(t)=c'),
         ' for ', m('t>a'), ', with ', m('a,c>0'), '. For ', m('x\\ge0'),
         ', define ', m('G(x)=\\int_0^x f(t)\\,dt'), '.'),
-      range('step from 0 to c at t=a; moving upper bound x>=0', 'One-sided step'),
+      profile([{ x0: 0, x1: 1, y0: 0, y1: 0 },
+        { x0: 1, x1: 1.7, y0: 1, y1: 1 }],
+      { kind: 'upper', symbol: 'x', min: 0, max: 1.7, step: 0.05,
+        initial: 0.65, thresholds: [{ value: 1 }] },
+      'One-sided step', [0, 1.8], [-0.15, 1.3], [{ x: 1, y: 1.15, label: 'a' }]),
     ], [q('function', 'Which expression gives G(x) for all x ≥ 0?', [
       ['correct', cases('0 & 0\\le x\\le a', 'c(x-a) & x>a')],
       ['wrong-offset', cases('0 & 0\\le x\\le a', 'cx & x>a')],
@@ -65,8 +100,12 @@ export default {
       p('A disk of radius ', m('R>0'), ' has constant value ', m('c>0'),
         ' inside and zero outside. Integrate over the concentric radius-', m('s'),
         ' disk for ', m('s\\ge0'), '. In polar coordinates, ', m('dA=\\rho\\,d\\rho\\,d\\phi'), '.'),
-      stub('region-2d', 'concentric disks of radii R and variable s; constant c inside R',
-        'Two concentric disks', 'The integration disk expands from the origin.'),
+      diagram('diagram2d', { shapes: [{ kind: 'disk', radius: 1, center: [0, 0] }],
+        control: { kind: 'disk', symbol: 's', min: 0, max: 1.6, step: 0.05,
+          initial: 0.65, thresholds: [{ value: 1 }] },
+        xRange: [-1.8, 1.8], yRange: [-1.8, 1.8], hideTicks: true,
+        labels: [{ x: 1, y: 0, label: 'R' }] },
+      'Two concentric disks', 'Schematic source disk and movable integration boundary.'),
     ], [q('function', 'Which expression gives the integral as a function of s?', [
       ['correct', cases('c\\pi s^2 & 0\\le s\\le R', 'c\\pi R^2 & s>R')],
       ['linear', cases('2\\pi cs & 0\\le s\\le R', '2\\pi cR & s>R')],
@@ -77,8 +116,9 @@ export default {
         ' inside and zero outside. Integrate over the concentric radius-', m('s'),
         ' ball for ', m('s\\ge0'), '. Use ',
         m('dV=r^2\\sin\\theta\\,dr\\,d\\theta\\,d\\phi'), '.'),
-      stub('region-3d', 'concentric balls of radii R and variable s; constant c inside R',
-        'Two concentric balls', 'The integration ball expands from the origin.'),
+      ball('sphere', { kind: 'sphere', symbol: 's', min: 0, max: 1.6, step: 0.05,
+        initial: 0.65, thresholds: [{ value: 1 }] },
+      'Two concentric balls', 'Schematic source ball and movable integration boundary.'),
     ], [q('function', 'Which expression gives the integral as a function of s?', [
       ['correct', cases('4\\pi cs^3/3 & 0\\le s\\le R', '4\\pi cR^3/3 & s>R')],
       ['surface', cases('4\\pi cs^2 & 0\\le s\\le R', '4\\pi cR^2 & s>R')],
@@ -88,8 +128,9 @@ export default {
       p('Let the function equal 1 on ', m('a<r<b'), ' and zero elsewhere, with ',
         m('0<a<b'), '. Integrate over a concentric radius-', m('s'), ' ball for ',
         m('s\\ge0'), '. Use ', m('dV=r^2\\sin\\theta\\,dr\\,d\\theta\\,d\\phi'), '.'),
-      stub('region-3d', 'hollow shell a<r<b; growing ball radius s',
-        'Shell and growing ball', 'The integral starts only when s reaches the inner radius.'),
+      ball('shell', { kind: 'sphere', symbol: 's', min: 0, max: 1.7, step: 0.05,
+        initial: 0.35, thresholds: [{ value: 0.5 }, { value: 1.1 }] },
+      'Shell and growing ball', 'Schematic shell and movable integration boundary.'),
     ], [q('function', 'Which expression gives the integral as a function of s?', [
       ['correct', cases('0 & 0\\le s\\le a',
         '4\\pi(s^3-a^3)/3 & a<s\\le b', '4\\pi(b^3-a^3)/3 & s>b')],
@@ -102,8 +143,9 @@ export default {
       p('Let ', m('f(r)=r^2'), ' for ', m('r<R'), ' and zero outside, with ',
         m('R>0'), '. Integrate over a concentric radius-', m('s'), ' ball for ',
         m('s\\ge0'), '. Use ', m('dV=r^2\\sin\\theta\\,dr\\,d\\theta\\,d\\phi'), '.'),
-      stub('region-3d', 'f(r)=r² for r<R; growing ball radius s',
-        'Quadratic ball and growing ball', 'The integral stops changing once s passes R.'),
+      ball('sphere', { kind: 'sphere', symbol: 's', min: 0, max: 1.6, step: 0.05,
+        initial: 0.65, thresholds: [{ value: 1 }] },
+      'Quadratic ball and growing ball', 'Schematic support ball and movable integration boundary.'),
     ], [q('function', 'Which expression gives the integral as a function of s?', [
       ['correct', cases('4\\pi s^5/5 & 0\\le s\\le R', '4\\pi R^5/5 & s>R')],
       ['volume', cases('4\\pi s^3/3 & 0\\le s\\le R', '4\\pi R^3/3 & s>R')],

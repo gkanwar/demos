@@ -1,5 +1,5 @@
 import { boxBoundary, sampleVectorField, sphereSurface } from '../geometry.js';
-import { ex, m, p, q, stub } from './common.js';
+import { diagram, ex, m, p, q } from './common.js';
 
 const bounds = { x: [-0.5, 0.5], y: [-0.5, 0.5], z: [-0.5, 0.5] };
 const labels = { xMin: 'A', xMax: 'B', yMin: 'C', yMax: 'D', zMin: 'E', zMax: 'F' };
@@ -64,8 +64,13 @@ export default [
   ex('axial-field-cylinder-parts', 'Flux through cylinder parts', [
     p('A closed vertical cylinder is oriented outward. Let ', m('\\vec F=\\hat e_3'),
       '. A is the bottom cap, B the top cap, and C the curved side.'),
-    stub('region-3d', 'closed vertical cylinder; A bottom cap, B top cap, C side; field +z',
-      'Labeled cylinder', 'The cylinder is oriented outward.', ['A', 'B', 'C']),
+    diagram('diagram3d', { shapes: [{ kind: 'cylinder', radius: 1,
+      zRange: [0, 1.5] }], hideTicks: true,
+      labels: [{ x: 0, y: 0, z: -0.12, label: 'A' },
+        { x: 0, y: 0, z: 1.62, label: 'B' },
+        { x: 1.12, y: 0, z: 0.75, label: 'C' }],
+      field: sampleVectorField([-0.5, 0, 0.5, 1], () => [0, 0, 1]) },
+    'Labeled cylinder', 'Schematic cylinder, oriented outward.'),
   ], [
     q('nonzero', 'Which parts have nonzero flux? Select all.',
       [['A', 'A'], ['B', 'B'], ['C', 'C']], ['A', 'B'],
@@ -77,8 +82,10 @@ export default [
   ex('radial-field-cylinder-flux', 'Radial field through a cylinder', [
     p('A closed cylinder has radius ', m('R>0'), ' and height ', m('h>0'),
       ', oriented outward. Let ', m('\\vec F=(x,y,0)'), '.'),
-    stub('region-3d', 'cylinder rho=R, 0<=z<=h; F=(x,y,0); side and caps marked',
-      'Cylinder in a radial field', 'The side and two caps form a closed surface.'),
+    diagram('diagram3d', { shapes: [{ kind: 'cylinder', radius: 1,
+      zRange: [0, 1.5] }], hideTicks: true,
+      field: sampleVectorField([-1, 0, 1], (x, y) => [x, y, 0]) },
+    'Cylinder in a radial field', 'Schematic side and caps in a radial field.'),
   ], [
     q('parts', 'Which part has nonzero flux?', [
       ['side', '\\text{curved side}'], ['top', '\\text{top cap}'],
@@ -92,8 +99,11 @@ export default [
   ex('oriented-disk-flux', 'Flux through an oriented disk', [
     p('A planar disk of radius ', m('R>0'), ' has normal ', m('+\\hat e_3'),
       '. Let ', m('\\vec F=c\\hat e_3'), ', with ', m('c>0'), '.'),
-    stub('region-3d', 'disk z=0, radius R, normal +z; constant field c e3',
-      'Oriented planar disk', 'The disk has a closed circular boundary.'),
+    diagram('diagram3d', { shapes: [{ kind: 'disk', radius: 1,
+      z: 0, mode: 'surface' }], hideTicks: true,
+      arrows: [{ at: [0, 0, 0], vector: [0, 0, 1], label: 'n' }],
+      field: sampleVectorField([-0.5, 0, 0.5], () => [0, 0, 1]) },
+    'Oriented planar disk', 'Schematic disk with upward normal.'),
   ], [q('flux', 'What is the flux through the disk?', [
     ['correct', 'c\\pi R^2'], ['negative', '-c\\pi R^2'],
     ['circumference', '2\\pi cR'], ['zero', '0'],
@@ -102,8 +112,10 @@ export default [
     p('Let ', m('\\vec r(u,v)=(u,v,u)'), ', with ', m('0\\le u,v\\le1'),
       ', and orient the patch by ', m('\\partial_u\\vec r\\times\\partial_v\\vec r'),
       '. Let ', m('\\vec F=\\hat e_3'), '.'),
-    stub('region-3d', 'tilted patch r(u,v)=(u,v,u), unit parameter square; oriented by ru cross rv',
-      'Tilted planar rectangle', 'The surface normal follows the stated parametrization.'),
+    diagram('diagram3d', { shapes: [{ kind: 'patch', mode: 'surface' }],
+      arrows: [{ at: [0.5, 0.5, 0.5], vector: [-1, 0, 1], label: 'n' }],
+      hideTicks: true }, 'Tilted planar rectangle',
+    'Patch (u, v, u), oriented by its parameter cross product.'),
   ], [
     q('normal', 'What is the oriented area vector per du dv?', [
       ['correct', '(-1,0,1)'], ['negative', '(1,0,-1)'],

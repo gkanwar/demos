@@ -1,3 +1,5 @@
+import { diagramFigure } from './diagram-data.js';
+
 const blue = '#165c91';
 const green = '#226435';
 const surfaceBlue = '#78afc8';
@@ -62,7 +64,10 @@ function arrowTraces(data) {
   }];
 }
 
-export function plotFigure(widget, data) {
+export function plotFigure(widget, data, value) {
+  if (widget === 'diagram1d' || widget === 'diagram2d' || widget === 'diagram3d') {
+    return diagramFigure(widget, data, value, arrowTraces);
+  }
   const labels = { x: 'x', y: 'y', z: 'z', ...data.axisLabels };
   const layout = {
     margin: { l: 35, r: 20, b: 35, t: 20 },
@@ -118,13 +123,23 @@ export function plotFigure(widget, data) {
     };
   }
   if (widget === 'scalar2d') {
+    const traces = [{
+      type: 'contour',
+      x: data.x, y: data.y, z: data.values,
+      colorscale: 'Blues',
+      contours: { coloring: 'heatmap', showlabels: Boolean(data.showContourLabels) },
+    }];
+    if (data.points?.length) traces.push({
+      type: 'scatter', mode: 'markers+text',
+      x: data.points.map((point) => point.x),
+      y: data.points.map((point) => point.y),
+      text: data.points.map((point) => point.label),
+      textposition: 'top center',
+      marker: { color: '#b85e22', size: 11 },
+      showlegend: false,
+    });
     return {
-      traces: [{
-        type: 'contour',
-        x: data.x, y: data.y, z: data.values,
-        colorscale: 'Blues',
-        contours: { coloring: 'heatmap' },
-      }],
+      traces,
       layout,
     };
   }

@@ -1,10 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { boxBoundary, sampleSurface, sampleVectorField,
-  sphereSurface } from '../src/geometry.js';
+import { boxBoundary, cylinderBoundary, diskSurface, ellipsoidSurface,
+  sampleSurface, sampleVectorField, sphereSurface } from '../src/geometry.js';
 import { plotFigure } from '../src/plot-data.js';
 import previews from '../src/plot-preview.js';
 import flux from '../src/exercises/flux.js';
+import modules from '../src/exercises/index.js';
+
+const scene = (moduleId, exerciseId) => modules.find((module) =>
+  module.id === moduleId).exercises.find((entry) => entry.id === exerciseId)
+  .generate().statement.find((block) => block.type === 'widget');
 
 test('parametric sampling creates coordinate grids', () => {
   const surface = sampleSurface((u, v) => [u, v, u + v],
@@ -28,6 +33,23 @@ test('sphere samples lie on the requested surface', () => {
       assert.ok(Math.abs(distance - 2) < 1e-10);
     }
   }
+});
+
+test('disk, cylinder, and ellipsoid samples match their boundaries', () => {
+  const disk = diskSurface(2, 1);
+  assert.ok(disk.z.flat().every((z) => z === 1));
+  assert.ok(disk.x.flat().every((x, i) =>
+    Math.hypot(x, disk.y.flat()[i]) <= 2 + 1e-10));
+  const cylinder = cylinderBoundary(1, [0, 2]);
+  assert.equal(cylinder.length, 3);
+  assert.ok(cylinder[0].x.flat().every((x, i) =>
+    Math.abs(Math.hypot(x, cylinder[0].y.flat()[i]) - 1) < 1e-10));
+  const ellipsoid = ellipsoidSurface([2, 1, 1]);
+  assert.ok(ellipsoid.x.flat().every((x, i) => {
+    const y = ellipsoid.y.flat()[i];
+    const z = ellipsoid.z.flat()[i];
+    return Math.abs(x * x / 4 + y * y + z * z - 1) < 1e-10;
+  }));
 });
 
 test('vector field sampling omits zero vectors', () => {
@@ -54,7 +76,7 @@ test('box boundary has six labeled faces and twelve edges', () => {
 test('each preview maps to a Plotly figure with the expected trace type', () => {
   const expected = ['quiver', 'contour', 'scatter3d', 'volume',
     'surface', 'surface', 'surface'];
-  previews.forEach(({ block }, index) => {
+  previews.slice(0, expected.length).forEach(({ block }, index) => {
     const figure = plotFigure(block.widget, block.data);
     assert.equal(figure.traces[0].type, expected[index]);
     assert.ok(figure.traces.length > 0);
@@ -62,6 +84,55 @@ test('each preview maps to a Plotly figure with the expected trace type', () => 
   assert.ok(plotFigure('geometry3d', previews[5].block.data)
     .traces[0].opacity <
     plotFigure('geometry3d', previews[4].block.data).traces[0].opacity);
+});
+
+test('all diagram previews produce their intended traces', () => {
+  const expected = ['scatter', 'scatter', 'quiver', 'scatter', 'scatter',
+    'surface', 'scatter3d', 'surface'];
+  previews.slice(7).forEach(({ block }, index) => {
+    const figure = plotFigure(block.widget, block.data);
+    assert.ok(figure.traces.some((trace) => trace.type === expected[index]));
+  });
+});
+
+test('numeric support diagrams show exact geometry and marked points', () => {
+  const disk = scene('delta-functions', 'delta-2d-disk-support');
+  const diskFigure = plotFigure(disk.widget, disk.data);
+  assert.deepEqual(disk.data.points[0], { x: 1, y: 0, label: '(1, 0)' });
+  assert.ok(Math.abs(Math.max(...diskFigure.traces[0].x) - 2) < 1e-10);
+  const cylinder = scene('delta-functions', 'delta-3d-cylinder-support');
+  const cylinderFigure = plotFigure(cylinder.widget, cylinder.data);
+  assert.deepEqual(cylinderFigure.traces.at(-1).text, ['P', 'Q', 'R']);
+  assert.deepEqual(cylinderFigure.traces.at(-1).x, [0, 2, 0]);
+  assert.deepEqual(cylinderFigure.traces.at(-1).z, [1, 1, 3]);
+});
+
+test('moving bounds change only the schematic geometry', () => {
+  const slab = scene('piecewise', 'nested-slab-layers');
+  const near = plotFigure(slab.widget, slab.data, 0.4);
+  const far = plotFigure(slab.widget, slab.data, 1.5);
+  assert.deepEqual(near.layout.shapes.slice(-2).map((shape) => shape.x0),
+    [-0.4, 0.4]);
+  assert.deepEqual(far.layout.shapes.slice(-2).map((shape) => shape.x0),
+    [-1.5, 1.5]);
+  assert.ok(far.traces.length > near.traces.length);
+  const disk = scene('piecewise', 'uniform-disk-cumulative');
+  const smallFigure = plotFigure(disk.widget, disk.data, 0.5);
+  const largeFigure = plotFigure(disk.widget, disk.data, 1.4);
+  const small = smallFigure.traces.find((trace) => trace.line?.color === '#b85e22');
+  const large = largeFigure.traces.find((trace) => trace.line?.color === '#b85e22');
+  assert.ok(Math.max(...large.x) > Math.max(...small.x));
+  assert.ok(smallFigure.traces.some((trace) =>
+    trace.fillcolor === 'rgba(34,100,53,0.25)'));
+  const ball = scene('piecewise', 'uniform-ball-cumulative');
+  const smallBall = plotFigure(ball.widget, ball.data, 0.5);
+  const largeBall = plotFigure(ball.widget, ball.data, 1.4);
+  const boundary = (figure) => figure.traces.find((trace) =>
+    trace.line?.color === '#b85e22');
+  assert.ok(Math.max(...boundary(largeBall).x) >
+    Math.max(...boundary(smallBall).x));
+  assert.ok(smallBall.traces.some((trace) =>
+    trace.colorscale?.[0]?.[1] === '#226435'));
 });
 
 test('2D plots label both axes and contours fill the initial view', () => {

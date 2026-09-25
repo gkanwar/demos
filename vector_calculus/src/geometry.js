@@ -56,6 +56,39 @@ export function sphereSurface(radius = 1, center = [0, 0, 0]) {
   };
 }
 
+export function diskSurface(radius = 1, z = 0) {
+  return {
+    id: 'disk',
+    ...sampleSurface(
+      (angle, distance) => [distance * Math.cos(angle),
+        distance * Math.sin(angle), z],
+      [0, 2 * Math.PI], [0, radius], 48, 16,
+    ),
+  };
+}
+
+export function cylinderBoundary(radius = 1, zRange = [0, 1], caps = true) {
+  const [z0, z1] = zRange;
+  const side = {
+    id: 'side',
+    ...sampleSurface((angle, z) => [radius * Math.cos(angle),
+      radius * Math.sin(angle), z], [0, 2 * Math.PI], [z0, z1], 48, 12),
+  };
+  return caps ? [side, diskSurface(radius, z0), diskSurface(radius, z1)] : [side];
+}
+
+export function ellipsoidSurface(radii = [2, 1, 1]) {
+  const [a, b, c] = radii;
+  return {
+    id: 'ellipsoid',
+    ...sampleSurface((angle, polar) => [
+      a * Math.sin(polar) * Math.cos(angle),
+      b * Math.sin(polar) * Math.sin(angle),
+      c * Math.cos(polar),
+    ], [0, 2 * Math.PI], [0, Math.PI]),
+  };
+}
+
 export function boxBoundary(bounds, faceIds) {
   const [x0, x1] = bounds.x;
   const [y0, y1] = bounds.y;

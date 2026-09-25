@@ -1,5 +1,5 @@
 import { sphereSurface } from '../geometry.js';
-import { ex, m, p, q, stub } from './common.js';
+import { diagram, ex, m, p, q } from './common.js';
 
 const cyl = p('Use cylindrical coordinates ', m('(\\rho,\\phi,z)'),
   ', with ', m('x=\\rho\\cos\\phi'), ', ', m('y=\\rho\\sin\\phi'), '.');
@@ -42,8 +42,13 @@ export default {
     ex('cartesian-to-cylindrical-vector', 'Cartesian vector in a cylindrical basis', [
       cyl, p('At a point with ', m('\\phi=\\pi/2'), ', express ', m('\\hat e_1'),
         ' in the cylindrical basis.'),
-      stub('basis-3d', 'point at azimuth pi/2; show Cartesian and cylindrical basis',
-        'Basis directions', 'The basis directions are attached to the stated point.'),
+      diagram('diagram3d', { axes: true, hideTicks: true,
+        points: [{ x: 0, y: 1, z: 0, label: 'P' }],
+        arrows: [
+          { at: [0, 1, 0], vector: [0, 1, 0], label: 'eρ' },
+          { at: [0, 1, 0], vector: [-1, 0, 0], label: 'eφ' },
+          { at: [0, 1, 0], vector: [0, 0, 1], label: 'e₃' },
+        ] }, 'Basis directions', 'Local cylindrical basis at azimuth π/2.'),
     ], [q('vector', 'Which expression is correct?', [
       ['correct', '-\\hat e_\\phi'], ['sign', '\\hat e_\\phi'],
       ['radial', '\\hat e_\\rho'], ['height', '\\hat e_3'],
@@ -66,8 +71,14 @@ export default {
     ], 'correct', 'On the positive x axis, increasing polar angle points toward negative z.')]),
     ex('spherical-basis-directions', 'Spherical basis directions', [
       sph, p('At the point ', m('(1,0,1)'), ', identify the three local unit vectors.'),
-      stub('basis-3d', 'point (1,0,1); show e_r, e_theta, e_phi and Cartesian axes',
-        'Spherical basis at a marked point', 'The basis vectors are attached to (1, 0, 1).'),
+      diagram('diagram3d', { axes: true, hideTicks: true,
+        points: [{ x: 1, y: 0, z: 1, label: 'P' }],
+        arrows: [
+          { at: [1, 0, 1], vector: [0.7, 0, 0.7], label: 'er' },
+          { at: [1, 0, 1], vector: [0.7, 0, -0.7], label: 'eθ' },
+          { at: [1, 0, 1], vector: [0, 1, 0], label: 'eφ' },
+        ] }, 'Spherical basis at a marked point',
+      'Local spherical basis at (1, 0, 1).'),
     ], [
       q('radial', 'Which direction is the radial unit vector?', [
         ['correct', '(\\hat e_1+\\hat e_3)/\\sqrt2'],
@@ -95,8 +106,10 @@ export default {
     ex('cylinder-area-element', 'Area element on a cylinder', [
       cyl, p('Consider the outward-oriented side of a cylinder ', m('\\rho=R'),
         ', with ', m('R>0'), '.'),
-      stub('region-3d', 'cylinder side rho=R; outward radial normal; coordinates phi and z',
-        'Cylinder side', 'The side surface is oriented outward.'),
+      diagram('diagram3d', { shapes: [{ kind: 'cylinder', radius: 1,
+        zRange: [0, 1.5], caps: false, mode: 'surface' }], hideTicks: true,
+        arrows: [{ at: [1, 0, 0.75], vector: [1, 0, 0], label: 'n' }] },
+      'Cylinder side', 'Schematic side surface and outward radial normal.'),
     ], [q('element', 'Which vector area element is correct?', [
       ['correct', 'd\\vec A=\\hat e_\\rho R\\,d\\phi\\,dz'],
       ['missing', 'd\\vec A=\\hat e_\\rho\\,d\\phi\\,dz'],

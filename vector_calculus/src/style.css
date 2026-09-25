@@ -59,6 +59,16 @@ h2 { margin: 2rem 0 0.25rem; }
 .widget figcaption { font-weight: 700; }
 .widget p { margin: 0.5rem 0; }
 
+.widget-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+}
+.widget-control label { display: flex; align-items: center; gap: 0.75rem; }
+.widget-control input { width: min(15rem, 48vw); }
+.widget-control output { color: #586a79; font-size: 0.9rem; }
+
 .widget-plot {
   width: 100%;
   height: clamp(18rem, 60vw, 30rem);

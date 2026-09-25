@@ -246,8 +246,10 @@ Seeded variants must preserve an unambiguous correct answer and keep support
 points away from region boundaries. For multiple-selection questions, make the
 available labels correspond exactly to the marked faces or path pieces.
 
-The existing widgets cover vector fields, scalar fields, cubes, and spheres.
-New scene needs (paths, disks, cylinders, shells, ellipsoids, marked support
-points, and local bases) currently use `diagram-stub` blocks. Their debug data
-records the intended scene for the next renderer pass. Keep explanations focused
-on the single key operation or geometric observation in each entry.
+Plot widgets now cover vector and scalar fields, paths, disks, cylinders,
+shells, ellipsoids, marked support points, and local bases. The nine piecewise
+exercises include sliders for their moving integration bounds; shaded regions
+show the current overlap without displaying the integral value. Symbolic
+dimensions are schematic, while diagrams for numerical delta support questions
+use the stated coordinates and region sizes. Keep explanations focused on the
+single key operation or geometric observation in each entry.

@@ -1,7 +1,44 @@
-import { ex, m, p, q, stub, vector2d } from './common.js';
+import { diagram, ex, m, p, q, vector2d } from './common.js';
 
-const path = (spec, caption, labels) => stub('path-2d', spec, caption,
-  'The path is oriented as stated in the problem.', labels);
+const field = (fn) => {
+  const points = [0, 0.5, 1, 1.5].flatMap((x) =>
+    [0, 0.5, 1, 1.5].map((y) => [x, y]));
+  return { x: points.map(([x]) => x), y: points.map(([, y]) => y),
+    u: points.map(([x, y]) => fn(x, y)[0]),
+    v: points.map(([x, y]) => fn(x, y)[1]) };
+};
+const square = [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]];
+const paths = {
+  'segment of length a': { path: { points: [[0, 0], [1.3, 0]] } },
+  'horizontal segment from (0,0) to (a,0)': { path: { points: [[0, 0], [1.3, 0]] } },
+  'segment from (0,0) to (a,0); field arrows point +x': {
+    path: { points: [[0, 0], [1.3, 0]] }, field: field(() => [1, 0]) },
+  'vertical segment from (0,0) to (0,a); field arrows point +x': {
+    path: { points: [[0, 0], [0, 1.3]] }, field: field(() => [1, 0]) },
+  'rectangle [0,a] x [1,2], CCW; A bottom, B right, C top, D left': {
+    path: { points: [[0, 1], [1.3, 1], [1.3, 2], [0, 2], [0, 1]] },
+    labels: [{ x: 0.65, y: 0.88, label: 'A' }, { x: 1.43, y: 1.5, label: 'B' },
+      { x: 0.65, y: 2.12, label: 'C' }, { x: -0.13, y: 1.5, label: 'D' }],
+    field: field((x, y) => [y, 0]), xRange: [-0.5, 1.8], yRange: [0.6, 2.4] },
+  'unit square [0,1]^2, counterclockwise; constant field (1,2)': {
+    path: { points: square }, field: field(() => [1, 2]) },
+  'counterclockwise circle centered at origin, radius R': {
+    path: { kind: 'circle', radius: 1, center: [0, 0] },
+    xRange: [-1.5, 1.5], yRange: [-1.5, 1.5] },
+  'unit square [0,1]^2, CCW, field F=(y,0)': {
+    path: { points: square }, field: field((x, y) => [y, 0]) },
+  'path from P=(0,0) to Q=(1,2); route may curve': {
+    path: { points: [[0, 0], [0.2, 0.5], [0.55, 0.7],
+      [0.7, 1.4], [1, 2]] },
+    points: [{ x: 0, y: 0, label: 'P' }, { x: 1, y: 2, label: 'Q' }],
+    xRange: [-0.4, 1.4], yRange: [-0.4, 2.4] },
+  'unit square [0,1]^2 with +z normal and CCW boundary': {
+    path: { points: square }, labels: [{ x: 0.5, y: 0.5, label: '+z' }] },
+};
+const path = (spec, caption) => diagram('diagram2d', {
+  xRange: [-0.4, 1.8], yRange: [-0.4, 1.8], hideTicks: true,
+  ...paths[spec] }, caption,
+  'Schematic directed path. Orange arrows indicate orientation.');
 const faceChoices = [['A', 'A'], ['B', 'B'], ['C', 'C'], ['D', 'D']];
 
 export default {

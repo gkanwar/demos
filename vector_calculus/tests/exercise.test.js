@@ -80,10 +80,7 @@ test('all generated content has distinct choices, valid math, and described widg
     if (value.type === 'widget') {
       assert.ok(value.caption);
       assert.ok(value.description);
-      if (value.widget === 'diagram-stub') {
-        assert.ok(value.data.kind);
-        assert.ok(value.data.spec);
-      }
+      assert.notEqual(value.widget, 'diagram-stub');
     }
     if (Array.isArray(value)) value.forEach(visit);
     else Object.values(value).forEach(visit);
@@ -136,9 +133,10 @@ test('every implemented plot widget produces a figure', () => {
     for (const definition of module.exercises) {
       const instance = definition.generate({ random: createRandom(1) });
       for (const block of instance.statement) {
-        if (block.type !== 'widget' || block.widget === 'diagram-stub') continue;
+        if (block.type !== 'widget') continue;
         const figure = plotFigure(block.widget, block.data);
         assert.ok(figure.traces.length, definition.id);
+        assert.ok(figure.layout, definition.id);
       }
     }
   }
