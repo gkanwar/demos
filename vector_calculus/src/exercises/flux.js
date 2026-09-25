@@ -1,4 +1,5 @@
 import { boxBoundary, sampleVectorField, sphereSurface } from '../geometry.js';
+import extraExercises from './flux-extra.js';
 
 const faces = [
   { id: 'A', plane: 'x = -1/2', outwardNormal: '-e1' },
@@ -80,7 +81,7 @@ export default {
         }],
       }],
     }),
-  }, {
+  }, ...extraExercises.slice(0, 3), {
     id: 'sphere-flux',
     title: 'Outward flux through a sphere',
     generate: () => ({
@@ -117,6 +118,10 @@ export default {
           { id: 'zero', content: [{ type: 'math', tex: '0' }] },
         ],
         correctOptionIds: ['positive-x'],
+        explanation: [{
+          type: 'paragraph',
+          content: [{ type: 'text', value: 'The outward normal points directly away from the center.' }],
+        }],
       }, {
         id: 'flux',
         prompt: [{
@@ -149,5 +154,5 @@ export default {
         }],
       }],
     }),
-  }],
+  }, ...extraExercises.slice(3)],
 };

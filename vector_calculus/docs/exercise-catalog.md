@@ -1,6 +1,6 @@
 # Exercise catalog
 
-This catalog specifies the next set of menu exercises. Each table row is one
+This catalog specifies the curated menu exercises. Each table row is one
 distinct exercise entry. An entry may generate small variations (coefficients,
 orientation, or support location) from a seed, but those variations do not add
 menu entries. The exercises use mathematical notation and geometric settings
@@ -36,24 +36,23 @@ direction, or coordinate errors.
 - Several exercises have more than one useful question part, such as identifying
   a normal before evaluating flux. All parts belong to the same menu entry.
 
-## Group map and implementation order
+## Group map
 
-| Group | Module ID | Implementation note |
+| Group | Module ID | Focus |
 | --- | ---: | --- |
-| Visualizing fields | `visualization` | Move the existing `identify-radial-field` here when coding this group. |
-| Fields and derivatives | `differential` | Expand the existing module. |
-| Coordinate systems | `coordinates` | Use equations and simple geometry/field plots. |
-| Units | `units` | Use symbolic length powers. |
-| Line integrals | `line-integrals` | Start with segments and rectangles. |
-| Surface integrals | `flux` | Expand the existing cube and sphere module. |
-| Volume integrals | `volume-integrals` | Prefer elementary bounds and symmetry. |
-| Delta functions | `delta-functions` | Test sifting, scaling, and region support. |
-| Piecewise functions | `piecewise` | Build cumulative integrals with piecewise answers. |
+| Visualizing fields | `visualization` | Match field plots and equations. |
+| Fields and derivatives | `differential` | Gradients, divergence, and curl. |
+| Coordinate systems | `coordinates` | Points, vectors, and differential elements. |
+| Units | `units` | Symbolic length powers. |
+| Line integrals | `line-integrals` | Segments and closed paths. |
+| Surface integrals | `flux` | Faces, normals, and total flux. |
+| Volume integrals | `volume-integrals` | Elementary bounds and symmetry. |
+| Delta functions | `delta-functions` | Sifting, scaling, and region support. |
+| Piecewise functions | `piecewise` | Cumulative integrals with piecewise answers. |
 
-The module IDs above are future code organization, not a request to rename
-current modules now. The site has no live progress data to migrate. Six rows
-below correspond to exercises already implemented; retain their exercise IDs
-and behavior when extending or reorganizing the modules.
+The module IDs match the current code organization. Six rows below began as
+prototype exercises; their exercise IDs and behavior were retained in this
+first complete pass. New entries currently use one representative version.
 
 ## Visualizing fields
 
@@ -69,7 +68,7 @@ should avoid a singularity when one is present.
 | `planar-rotation` | A field $(-y,x)$; distinguish rotation from radial and saddle fields. | Vector plot → equation; vary rotation sense. |
 | `saddle-vector-2d` | A field $(x,-y)$; identify opposing behavior along the axes. | Vector plot → equation; vary axis signs. |
 | `uniform-vector-3d` | A constant field $\hat e_3$; select the matching expression. | Interactive 3D vector plot → equation; vary Cartesian direction. |
-| `identify-radial-field` | The 3D field $\vec x$; distinguish it from $\lvert\vec x\rvert\hat e_1$ and normalized radial fields. | Existing exercise; 3D vector plot → equation. Move from `differential` later. |
+| `identify-radial-field` | The 3D field $\vec x$; distinguish it from $\lvert\vec x\rvert\hat e_1$ and normalized radial fields. | Existing exercise; 3D vector plot → equation in `visualization`. |
 | `inverse-square-radial-3d` | The field $\vec x/\lvert\vec x\rvert^3$; identify its radial direction and decreasing length away from the origin. | 3D vector plot → equation; omit the origin. |
 | `scalar-ramp-contours` | Contours of $f(x,y)=x$; choose the scalar equation. | Scalar contour plot → equation; vary ramp direction. |
 | `scalar-bowl-contours` | Concentric contours of $f(x,y)=x^2+y^2$; distinguish a bowl from a cone and a shifted bowl. | Scalar contour plot → equation; show level values. |
@@ -247,9 +246,8 @@ Seeded variants must preserve an unambiguous correct answer and keep support
 points away from region boundaries. For multiple-selection questions, make the
 available labels correspond exactly to the marked faces or path pieces.
 
-The existing widgets cover vector fields, scalar fields, and basic geometry.
-Additional geometry presets (paths, disks, cylinders, shells, ellipsoids,
-marked support points) can be introduced incrementally. A text or equation
-statement is sufficient until a preset exists; the mathematical question and
-answer options above do not depend on a new renderer. Keep explanations focused
+The existing widgets cover vector fields, scalar fields, cubes, and spheres.
+New scene needs (paths, disks, cylinders, shells, ellipsoids, marked support
+points, and local bases) currently use `diagram-stub` blocks. Their debug data
+records the intended scene for the next renderer pass. Keep explanations focused
 on the single key operation or geometric observation in each entry.

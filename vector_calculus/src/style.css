@@ -25,6 +25,7 @@ h2 { margin: 2rem 0 0.25rem; }
 }
 
 .module-name { margin: 1.25rem 0 0; }
+.completion-summary { color: #226435; font-weight: 600; }
 
 .exercise-list {
   list-style: none;
@@ -95,6 +96,7 @@ h2 { margin: 2rem 0 0.25rem; }
 
 .option:hover { background: #f0f5f8; }
 .option input { margin-top: 0.35rem; }
+.option > span { min-width: 0; overflow-x: auto; }
 .correct-answer { background: #e6f4e8; }
 .feedback { margin-top: 0.75rem; }
 .feedback p { margin-bottom: 0; }

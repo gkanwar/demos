@@ -72,13 +72,27 @@ export function plotFigure(widget, data) {
   };
 
   if (widget === 'vector2d' || widget === 'scalar2d') {
+    layout.dragmode = 'pan';
+    layout.margin.l = 60;
+    layout.margin.b = 60;
     layout.xaxis = {
-      title: labels.x,
+      title: { text: labels.x, standoff: 10 },
+      automargin: true,
       scaleanchor: 'y',
       scaleratio: 1,
       zeroline: true,
     };
-    layout.yaxis = { title: labels.y, zeroline: true };
+    layout.yaxis = {
+      title: { text: labels.y, standoff: 10 },
+      automargin: true,
+      zeroline: true,
+    };
+    if (widget === 'scalar2d') {
+      layout.xaxis.range = [-1.5, 1.5];
+      layout.yaxis.range = [-1.5, 1.5];
+      layout.xaxis.constrain = 'domain';
+      layout.yaxis.constrain = 'domain';
+    }
   } else {
     layout.scene = {
       xaxis: { title: labels.x },

@@ -64,6 +64,25 @@ test('each preview maps to a Plotly figure with the expected trace type', () => 
     plotFigure('geometry3d', previews[4].block.data).traces[0].opacity);
 });
 
+test('2D plots label both axes and contours fill the initial view', () => {
+  for (const { block } of previews.slice(0, 2)) {
+    const figure = plotFigure(block.widget, block.data);
+    assert.equal(figure.layout.xaxis.title.text, 'x');
+    assert.equal(figure.layout.yaxis.title.text, 'y');
+    assert.equal(figure.layout.dragmode, 'pan');
+    assert.ok(figure.layout.margin.l >= 60);
+    assert.ok(figure.layout.margin.b >= 60);
+  }
+  const contour = previews[1].block;
+  const layout = plotFigure(contour.widget, contour.data).layout;
+  assert.ok(Math.min(...contour.data.x) < layout.xaxis.range[0]);
+  assert.ok(Math.max(...contour.data.x) > layout.xaxis.range[1]);
+  assert.ok(Math.min(...contour.data.y) < layout.yaxis.range[0]);
+  assert.ok(Math.max(...contour.data.y) > layout.yaxis.range[1]);
+  assert.equal(layout.xaxis.constrain, 'domain');
+  assert.equal(layout.yaxis.constrain, 'domain');
+});
+
 test('all 3D vector fields use shafts and cone heads with the same style', () => {
   const radial = previews[2].block.data;
   const cube = previews[6].block.data.vectors;

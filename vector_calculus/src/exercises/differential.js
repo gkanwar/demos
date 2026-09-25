@@ -1,52 +1,16 @@
-import { sampleVectorField } from '../geometry.js';
+import extraExercises from './differential-extra.js';
 
 const text = (value) => ({ type: 'text', value });
 const math = (tex) => ({ type: 'math', tex });
 const paragraph = (...content) => ({ type: 'paragraph', content });
 const choice = (id, tex) => ({ id, content: [math(tex)] });
 
-const radialField = sampleVectorField(
-  [-1, -0.5, 0, 0.5, 1], (x, y, z) => [x, y, z],
-);
-
 export default {
   id: 'differential',
   title: 'Fields and derivatives',
-  description: 'Basic vector fields, gradients, and divergence.',
+  description: 'Gradients, divergence, curl, and their field plots.',
   exercises: [
-    {
-      id: 'identify-radial-field',
-      title: 'Identify a vector field',
-      generate: () => ({
-        statement: [
-          paragraph(text('Identify the functional form of the field represented by this plot object.')),
-          {
-            type: 'widget',
-            widget: 'vector3d',
-            data: radialField,
-            caption: '3D vector field',
-            description: 'Vector field pointed away from the origin in all directions.',
-          },
-        ],
-        questions: [{
-          id: 'field',
-          prompt: [paragraph(text('Which expression describes the field?'))],
-          selection: 'single',
-          options: [
-            choice('radial', '\\vec{x}'),
-            choice('inward', '-\\vec{x}'),
-            choice('axis', '|\\vec{x}|\\hat{e}_1'),
-            choice('rotation', '-y\\hat{e}_1+x\\hat{e}_2'),
-          ],
-          correctOptionIds: ['radial'],
-          explanation: [paragraph(
-            text('Each arrow has the same components as its position, so the field is '),
-            math('\\vec{F}(\\vec{x})=\\vec{x}'),
-            text('.'),
-          )],
-        }],
-      }),
-    },
+    ...extraExercises.slice(0, 1),
     {
       id: 'gradient-squared-norm',
       title: 'Gradient of squared distance',
@@ -84,10 +48,13 @@ export default {
               choice('zero', '0'),
             ],
             correctOptionIds: ['two-e1'],
+            explanation: [paragraph(text('At (1, 0, 0), the field 2x equals '),
+              math('2\\hat e_1'), text('.'))],
           },
         ],
       }),
     },
+    ...extraExercises.slice(1, 7),
     {
       id: 'divergence-radial-field',
       title: 'Divergence of the radial field',
@@ -147,5 +114,6 @@ export default {
         };
       },
     },
+    ...extraExercises.slice(7),
   ],
 };

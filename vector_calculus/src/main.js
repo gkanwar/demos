@@ -26,10 +26,15 @@ function menuLink(parent) {
 
 function renderMenu() {
   const progress = getProgress();
+  const exerciseKeys = modules.flatMap((module) => module.exercises.map(
+    (exercise) => module.id + '/' + exercise.id));
+  const completed = exerciseKeys.filter((key) => progress[key]?.completed).length;
   const main = document.createElement('main');
   main.className = 'page menu';
   addText(main, 'h1', 'Vector calculus exercises');
   addText(main, 'p', 'Choose an exercise and check your answers at your own pace.');
+  addText(main, 'p', `Completed ${completed} of ${exerciseKeys.length} exercises.`,
+    'completion-summary');
 
   for (const module of modules) {
     const section = document.createElement('section');

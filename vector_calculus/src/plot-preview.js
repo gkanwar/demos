@@ -1,4 +1,4 @@
-import differential from './exercises/differential.js';
+import visualization from './exercises/visualization.js';
 import flux from './exercises/flux.js';
 import { sphereSurface } from './geometry.js';
 
@@ -9,7 +9,8 @@ const contourAxis = Array.from({ length: 21 }, (_, index) => -2 + index * 0.2);
 const volumeAxis = Array.from({ length: 13 }, (_, index) => -1.5 + index * 0.25);
 const volumePoints = volumeAxis.flatMap((x) =>
   volumeAxis.flatMap((y) => volumeAxis.map((z) => [x, y, z])));
-const radialField = differential.exercises[0].generate().statement[1];
+const radialField = visualization.exercises.find((entry) =>
+  entry.id === 'identify-radial-field').generate().statement[1];
 const cube = flux.exercises[0].generate().statement[1];
 
 export default [

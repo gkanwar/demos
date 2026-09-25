@@ -1,7 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import katex from 'katex';
 import modules from '../src/exercises/index.js';
 import { createRandom, grade } from '../src/exercise.js';
+import { plotFigure } from '../src/plot-data.js';
 import { getProgress, updateProgress } from '../src/progress.js';
 
 const differential = modules.find((module) => module.id === 'differential');
@@ -9,6 +12,10 @@ const flux = modules.find((module) => module.id === 'flux');
 const exercise = (module, id, seed = 1) =>
   module.exercises.find((entry) => entry.id === id)
     .generate({ random: createRandom(seed) });
+const byId = (moduleId, id) => exercise(
+  modules.find((module) => module.id === moduleId), id);
+const answerTex = (question) => question.options.find((option) =>
+  option.id === question.correctOptionIds[0]).content[0].tex;
 
 test('generated exercises repeat for the same seed and vary across seeds', () => {
   const first = exercise(differential, 'linear-divergence', 1);
@@ -31,6 +38,107 @@ test('example exercises have valid, distinct answer choices', () => {
             assert.equal(question.correctOptionIds.length, 1);
           }
         }
+      }
+    }
+  }
+});
+
+test('all catalog exercises are registered in their planned modules', () => {
+  const lines = readFileSync(new URL('../docs/exercise-catalog.md', import.meta.url),
+    'utf8').split('\n');
+  const groupModules = new Map();
+  for (const line of lines) {
+    const match = line.match(/^\| ([^|]+) \| `([a-z-]+)` \|/);
+    if (match) groupModules.set(match[1], match[2]);
+  }
+  const expected = new Map();
+  let group;
+  for (const line of lines) {
+    if (line.startsWith('## ')) group = line.slice(3);
+    const match = line.match(/^\| `([a-z0-9-]+)` \|/);
+    if (match) {
+      const moduleId = groupModules.get(group);
+      assert.ok(moduleId, `No module for catalog group ${group}`);
+      if (!expected.has(moduleId)) expected.set(moduleId, []);
+      expected.get(moduleId).push(match[1]);
+    }
+  }
+  assert.deepEqual(modules.map((module) => module.id), [...expected.keys()]);
+  for (const module of modules) {
+    const actual = module.exercises.map((entry) => entry.id);
+    assert.equal(new Set(actual).size, actual.length, module.id);
+    assert.deepEqual(actual, expected.get(module.id), module.id);
+  }
+});
+
+test('all generated content has distinct choices, valid math, and described widgets', () => {
+  const visit = (value) => {
+    if (!value || typeof value !== 'object') return;
+    if (value.type === 'math' || value.type === 'equation') {
+      katex.renderToString(value.tex, { throwOnError: true });
+    }
+    if (value.type === 'widget') {
+      assert.ok(value.caption);
+      assert.ok(value.description);
+      if (value.widget === 'diagram-stub') {
+        assert.ok(value.data.kind);
+        assert.ok(value.data.spec);
+      }
+    }
+    if (Array.isArray(value)) value.forEach(visit);
+    else Object.values(value).forEach(visit);
+  };
+  for (const module of modules) {
+    for (const definition of module.exercises) {
+      for (const seed of [0, 1, 42]) {
+        const instance = definition.generate({ random: createRandom(seed) });
+        assert.deepEqual(instance,
+          definition.generate({ random: createRandom(seed) }), definition.id);
+        assert.ok(instance.statement.length, definition.id);
+        const questionIds = instance.questions.map((question) => question.id);
+        assert.equal(new Set(questionIds).size, questionIds.length, definition.id);
+        for (const question of instance.questions) {
+          const labels = question.options.map((option) => JSON.stringify(option.content));
+          assert.equal(new Set(labels).size, labels.length,
+            `${definition.id}/${question.id}`);
+          assert.ok(question.explanation?.length, `${definition.id}/${question.id}`);
+        }
+        visit(instance);
+      }
+    }
+  }
+});
+
+test('representative results across the new groups are correct', () => {
+  assert.equal(answerTex(byId('coordinates', 'cartesian-to-spherical-point')
+    .questions[0]), '(2,\\pi/4,\\pi/4)');
+  assert.equal(answerTex(byId('differential', 'curl-mixed-linear')
+    .questions[0]), '(-b,-c,-a)');
+  assert.deepEqual(byId('line-integrals', 'rectangular-path-contributing-legs')
+    .questions[0].correctOptionIds, ['A', 'C']);
+  assert.equal(answerTex(byId('line-integrals', 'stokes-simple-check')
+    .questions[1]), '1');
+  assert.equal(answerTex(byId('flux', 'radial-field-cylinder-flux')
+    .questions[1]), '2\\pi R^2h');
+  assert.equal(answerTex(byId('volume-integrals', 'gaussian-all-space-integral')
+    .questions[0]), '\\pi^{3/2}');
+  assert.equal(answerTex(byId('delta-functions', 'scaled-delta-1d')
+    .questions[0]), '1');
+  assert.deepEqual(byId('delta-functions', 'delta-3d-cylinder-support')
+    .questions.map((question) => question.correctOptionIds[0]),
+  ['one', 'zero', 'zero']);
+  assert.match(answerTex(byId('piecewise', 'hollow-shell-cumulative')
+    .questions[0]), /s\^3-a\^3/);
+});
+
+test('every implemented plot widget produces a figure', () => {
+  for (const module of modules) {
+    for (const definition of module.exercises) {
+      const instance = definition.generate({ random: createRandom(1) });
+      for (const block of instance.statement) {
+        if (block.type !== 'widget' || block.widget === 'diagram-stub') continue;
+        const figure = plotFigure(block.widget, block.data);
+        assert.ok(figure.traces.length, definition.id);
       }
     }
   }
