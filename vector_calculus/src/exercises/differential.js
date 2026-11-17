@@ -107,7 +107,7 @@ export default {
             correctOptionIds: ['sum'],
             explanation: [paragraph(
               text('Differentiate each component along its own axis: '),
-              math('a+b+c=' + (a + b + c)),
+              math(a + '+' + b + '+' + c + '=' + (a + b + c)),
               text('.'),
             )],
           }],

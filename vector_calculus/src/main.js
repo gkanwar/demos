@@ -33,7 +33,9 @@ function renderMenu() {
   const main = document.createElement('main');
   main.className = 'page menu';
   addText(main, 'h1', 'Vector calculus exercises');
-  addText(main, 'p', 'Choose an exercise and check your answers at your own pace.');
+  addText(main, 'p', 'Choose an exercise and check your answers at your own pace. ' +
+          'Content is AI generated with human guidance and checking. ' +
+          'If you notice issues, let me know!');
   addText(main, 'p', `Completed ${completed} of ${exerciseKeys.length} exercises.`,
     'completion-summary');
 
